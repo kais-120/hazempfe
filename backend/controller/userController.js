@@ -2,8 +2,9 @@ const { body, validationResult } = require("express-validator")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
+const { Groupe } = require("../model");
 
-exports.register = [
+exports.addUser = [
     body("nom").notEmpty().withMessage("nom is required"),
     body("prenom").notEmpty().withMessage("prenom is required"),
     body("email").notEmpty().withMessage("email is required"),
@@ -44,29 +45,24 @@ exports.register = [
     }
 }
 ]
-exports.login = [
-    body("email").notEmpty().withMessage("email required"),
-    body("password").notEmpty().withMessage("password required"),
-    async (req,res) => {
- const errors = validationResult(req);
-        if(!errors.isEmpty()){
-            return res.status(422).json({ errors: errors.array().map(err => err.msg) });
-        }
+exports.getUsers = async (req,res) => {
         try{
-        const {email,password} = req.body;
-        const user = await User.findOne({where: {email:email.toLowerCase()} });
-        if (!user) return res.status(400).json({ message: "Invalid credentials" });
-        const isMatch = await bcrypt.compare(password,user.password);
-        if(!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-        const token = jwt.sign({sub:user.id,iss:"domain",aud:"name"},process.env.JWTKEY);
-        return res.status(200).json({ message: "valid credentials" , token : token , role : user.role });
-       
+            const {role} = req.params
+            const users = await User.findAll({
+                where :{
+                    role
+                }
+            });
+            if(users.length === 0) {
+                return res.status(404).json({message:"users is empty"})
+            }
+            return res.json({message:"users found",users})
     }catch(err){
         console.log(err)
         return res.status(500).json({message:err});
     }
 }
-]
+
 
 exports.profile = async (req,res) => {
         try{
