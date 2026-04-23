@@ -2,26 +2,29 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const User = require("./User");
 
-const Groupe = sequelize.define("groupe",{
+const ParentChild = sequelize.define("parent_children",{
     id:{
         type:DataTypes.BIGINT,
         primaryKey:true,
         autoIncrement:true,
     },
-    libelle:{
-        type:DataTypes.STRING(20),
-    },
-    type:{
-        type:DataTypes.STRING(20),
-    },
-    entraineur_id:{
+    parent_id:{
         type:DataTypes.BIGINT,
         references:{
             model:User,
             key:"id"
         }
     },
-    
+    joueur_id:{
+        type:DataTypes.BIGINT,
+        references:{
+            model:User,
+            key:"id"
+        }
+    },
+    status:{
+        type:DataTypes.STRING,
+    },
 })
 
-module.exports = Groupe;
+module.exports = ParentChild;

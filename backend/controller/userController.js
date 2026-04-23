@@ -2,8 +2,9 @@ const { body, validationResult, param } = require("express-validator")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
-const { Groupe, GroupeJoueur } = require("../model");
+const { Groupe, GroupeJoueur, ParentChild } = require("../model");
 const { Op } = require("sequelize");
+const sequelize = require("../config/db");
 
 exports.addUser = [
     body("nom").notEmpty().withMessage("nom is required"),
@@ -115,22 +116,24 @@ async (req,res) => {
         )
 
         let players = await User.findAll({
-            where: {
-            role: "joueur",
-            dateNaissance: {
-                [Op.between]: [minDate, maxDate],
-            },
-            },
-            include: [
-            {
-                model: GroupeJoueur,
-                as: "groupeJoueur",
-                required: false,
-            },
-            ],
-        })
+  where: {
+    role: "joueur",
+    dateNaissance: {
+      [Op.between]: [minDate, maxDate],
+    },
+    "$groupeJoueur.id$": null // ✅ only players WITHOUT group
+  },
+  include: [
+    {
+      model: GroupeJoueur,
+      as: "groupeJoueur",
+      required: false,
+      attributes: [] 
+    },
+  ],
+})
             if(players.length === 0) {
-                return res.status(404).json({message:"there are not have players with that age"})
+                return res.status(200).json({message:"there are not have players with that age"})
             }
             return res.json({message:"users found",players})
     }catch(err){
@@ -139,3 +142,50 @@ async (req,res) => {
     }
 }
 ]
+
+exports.addChild = [
+    body("nom").notEmpty().withMessage("nom is required"),
+    body("prenom").notEmpty().withMessage("prenom is required"),
+    body("dateNaissance").notEmpty().withMessage("date Naissance is required"),
+    async (req,res) => {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()){
+            return res.status(422).json({ errors: errors.array().map(err => err.msg) });
+        }
+        try{
+            const userId = req.userId
+        const {nom,prenom,dateNaissance} = req.body;
+        const user = await User.create({nom,prenom,dateNaissance});
+        await ParentChild.create({parent_id:userId,joueur_id:user.id})
+        return res.status(201).json({message:"child created"});
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({message:"server error"});
+    }
+}
+]
+
+exports.getChild =  async (req,res) => {
+        try{
+        const userId = req.userId
+        const user = await User.findByPk(userId);
+        if(!user){
+            return res.status(404).json({message:"user not found"});
+        }
+        const children = await ParentChild.findAll({
+            where: { parent_id: userId },
+            include: [
+                {
+                model: User,
+                as: "joueurParent",
+                attributes: ["id", "nom", "prenom"]
+                }
+            ]
+            })
+        return res.status(201).json({message:"children",children});
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({message:"server error"});
+    }
+}
+

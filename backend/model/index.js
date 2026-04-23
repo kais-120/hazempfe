@@ -1,3 +1,4 @@
+const ParentChild = require("./ParentChild");
 const Emploi = require("./Emploi");
 const Groupe = require("./Groupe");
 const GroupeJoueur = require("./GroupeJoueur");
@@ -40,4 +41,26 @@ Emploi.belongsTo(Groupe,{
 })
 
 
-module.exports = {User,Groupe,GroupeJoueur,Emploi}
+
+
+User.hasMany(ParentChild,{
+    foreignKey:"parent_id",
+    as:"parent"
+});
+ParentChild.belongsTo(User,{
+    foreignKey:"parent_id",
+    as:"parentUser"
+})
+
+User.hasMany(ParentChild,{
+    foreignKey:"joueur_id",
+    as:"parentJoueur"
+});
+ParentChild.belongsTo(User,{
+    foreignKey:"joueur_id",
+    as:"joueurParent"
+})
+
+
+
+module.exports = {User,Groupe,GroupeJoueur,Emploi,ParentChild}

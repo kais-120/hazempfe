@@ -8,18 +8,19 @@ const { Op } = require("sequelize");
 exports.addGroup = [
     body("libelle").notEmpty().withMessage("libelle is required"),
     body("entraineur_id").notEmpty().withMessage("entraineur id is required"),
+    body("type").notEmpty().withMessage("type is required"),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array().map(err => err.msg) });
         }
         try {
-            const { libelle, entraineur_id } = req.body;
+            const { libelle, entraineur_id,type } = req.body;
             const existliblle = await Groupe.findOne({ where: { libelle } });
             if (existliblle) {
                 return res.status(422).json({ message: "libelle is already used" });
             }
-            await Groupe.create({ libelle, entraineur_id })
+            await Groupe.create({ libelle, entraineur_id,type })
             return res.status(201).json({ message: "group created" });
         } catch (err) {
             console.log(err)
@@ -185,7 +186,7 @@ exports.listJoueursGroup = async (req, res) => {
         })
         return res.json({
             message: "Players assigned successfully",
-            list:list[0].joueurGroupe
+            list
         })
 
     } catch (err) {
@@ -193,3 +194,35 @@ exports.listJoueursGroup = async (req, res) => {
         return res.status(500).json({ message: "server error" })
     }
 }
+
+exports.EditJoueurGroup = async (req, res) => {
+  try {
+    const { deleteJoueur = [], ajouteJoueur = [],groupe_id} = req.body;
+
+    // DELETE
+    if (deleteJoueur.length > 0) {
+      await GroupeJoueur.destroy({
+        where: { id: deleteJoueur }
+      });
+    }
+
+    // ADD
+    if (ajouteJoueur.length > 0) {
+      const data = ajouteJoueur.map(joueur_id => ({
+        groupe_id,
+        joueur_id
+      }));
+
+      await GroupeJoueur.bulkCreate(data);
+    }
+
+    return res.json({
+      message: "group joueur updated",
+    });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "server error" });
+}
+}
+
