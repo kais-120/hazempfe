@@ -83,7 +83,6 @@ exports.profile = async (req,res) => {
         return res.status(200).json({ message: "user found" , user});
        
     }catch(err){
-        console.log(err)
-        return res.status(500).json({message:err});
+        return res.status(500).json({message:"error server"});
     }
 }

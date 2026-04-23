@@ -1,3 +1,4 @@
+const Emploi = require("./Emploi");
 const Groupe = require("./Groupe");
 const GroupeJoueur = require("./GroupeJoueur");
 const User = require("./User");
@@ -22,12 +23,21 @@ GroupeJoueur.belongsTo(User,{
 
 Groupe.hasMany(GroupeJoueur,{
     foreignKey:"groupe_id",
-    as:"joueurgGroupe"
+    as:"joueurGroupe"
 });
 GroupeJoueur.belongsTo(Groupe,{
     foreignKey:"groupe_id",
     as:"groupeJoueur"
 })
 
+Groupe.hasMany(Emploi,{
+    foreignKey:"groupe_id",
+    as:"emploi"
+});
+Emploi.belongsTo(Groupe,{
+    foreignKey:"groupe_id",
+    as:"groupeEmploi"
+})
 
-module.exports = {User,Groupe,GroupeJoueur}
+
+module.exports = {User,Groupe,GroupeJoueur,Emploi}
