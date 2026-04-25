@@ -110,17 +110,21 @@ exports.getChildEmploi =  async (req,res) => {
             return res.status(403).json({ message: "Forbidden"});
         }
         const emploi = await Groupe.findAll({
-            where: {entraineur_id:userId},
             include:[
                 {
-                    model:User,
-                    as:"entraineur",
-                    attributes:["nom","prenom"]
+                    model:GroupeJoueur,
+                    as:"joueurGroupe",
+                    where:{joueur_id:id},
                 },
                 {
                     model:Emploi,
                     as:"emploi"
                     
+                },
+                {
+                    model:User,
+                    as:"entraineur",
+                    attributes:["nom","prenom"]
                 }
             ]
         });

@@ -155,7 +155,7 @@ exports.addChild = [
         try{
             const userId = req.userId
         const {nom,prenom,dateNaissance} = req.body;
-        const user = await User.create({nom,prenom,dateNaissance});
+        const user = await User.create({nom,prenom,dateNaissance,role:"joueur"});
         await ParentChild.create({parent_id:userId,joueur_id:user.id})
         return res.status(201).json({message:"child created"});
     }catch(err){
