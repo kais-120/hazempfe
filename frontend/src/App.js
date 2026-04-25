@@ -1,0 +1,59 @@
+import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import Home from './pages/Home'
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
+import AuthProtection from './protection/AuthProtection'
+import DashboardHome from './dashboard/DashboardHome'
+import RoleProtection from './protection/RoleProtection'
+import Groups from './dashboard/admin/ListGroupes'
+import ListeEntraineurs from './dashboard/admin/Users/ListeEntraineurs'
+import AddEntraineur from './dashboard/admin/Users/AddEntraineur'
+import AddGroupe from './dashboard/admin/AddGroup'
+import AddEmploi from './dashboard/admin/AddEmploi'
+import AddJoueurGroupAuto from './dashboard/admin/AddJoueurGroupAuto'
+import AddJoueurGroupManual from './dashboard/admin/AddJoueurGroupManual'
+import Emploi from './dashboard/Emploi'
+import ListeParent from './dashboard/admin/Users/ListeParent'
+import ListeJoueur from './dashboard/admin/Users/ListeJoueur'
+import ListJoueursGroupe from './dashboard/admin/ListJoueursGroupe'
+import AddChild from './dashboard/admin/Users/AddChild'
+import EditJoueurGroup from './dashboard/admin/EditJoueurGroup'
+
+const App = () => {
+  return (
+    <Routes>
+      <Route path='/' element={<Home />}  />
+      <Route element={<AuthProtection />}>
+      <Route path='/login' element={<Login />}  />
+      <Route path='/inscription' element={<Register />}  />
+      </Route>
+      <Route element={<RoleProtection allowRole={["joueur","parent","entraineur","admin"]} />}>
+      <Route path='/dashboard' element={<DashboardHome />}>
+        <Route path="groupes" element={<Groups />}/>
+        <Route path="groupes/:id/emploi/add" element={<AddEmploi />}/>
+        <Route path="groupes/add" element={<AddGroupe />}/>
+        <Route path="groupes/:id/joueurs/add" element={<AddJoueurGroupManual />}/>
+        <Route path="groupes/:id/joueurs/edit" element={<EditJoueurGroup />}/>
+
+        <Route path="groupes/:id/joueurs/auto" element={<AddJoueurGroupAuto />}/>
+        <Route path="groupes/:id/list" element={<ListJoueursGroupe />}/>
+        <Route path="utilisateurs/entraineurs" element={<ListeEntraineurs />}/>
+        <Route path="utilisateurs/parents" element={<ListeParent />}/>
+        <Route path="utilisateurs/joueurs" element={<ListeJoueur />}/>
+        <Route path="utilisateurs/entraineurs/add" element={<AddEntraineur />}/>
+        <Route path="utilisateurs/child/add" element={<AddChild />}/>
+
+
+        <Route path="emploi" element={<Emploi />}/>
+
+
+      </Route>
+      
+      </Route>
+
+    </Routes>
+  )
+}
+
+export default App
