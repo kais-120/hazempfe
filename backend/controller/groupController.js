@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 const { Groupe, Emploi, GroupeJoueur } = require("../model");
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 exports.addGroup = [
     body("libelle").notEmpty().withMessage("libelle is required"),
@@ -146,7 +146,6 @@ exports.addJoueurGroupAuto = [
 
             const selected = players.slice(0, Number(count))
 
-            // 🔥 insert
             for (const p of selected) {
                 await GroupeJoueur.create({
                     joueur_id: p.id,
@@ -167,6 +166,50 @@ exports.addJoueurGroupAuto = [
 ]
 
 exports.listJoueursGroup = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const list = await Groupe.findAll({where:{id},
+            include:[
+                {
+                    model:GroupeJoueur,
+                    as:"joueurGroupe",
+                    include:[
+                        {
+                            model:User,
+                            as:"joueurs",
+                            attributes:["nom","prenom","createdAt"]
+                        }
+                    ]
+                }
+            ]
+        })
+        return res.json({
+            message: "Players assigned successfully",
+            list
+        })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "server error" })
+    }
+}
+
+exports.entraineurListGroup = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const groups = await Groupe.findAll({where:{entraineur_id:userId}})
+        return res.json({
+            message: "Players assigned successfully",
+            groups
+        })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "server error" })
+    }
+}
+
+exports.entraineurListJoueursGroup = async (req, res) => {
     try {
         const {id} = req.params;
         const list = await Groupe.findAll({where:{id},

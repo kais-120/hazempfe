@@ -19,6 +19,7 @@ import ListeJoueur from './dashboard/admin/Users/ListeJoueur'
 import ListJoueursGroupe from './dashboard/admin/ListJoueursGroupe'
 import AddChild from './dashboard/admin/Users/AddChild'
 import EditJoueurGroup from './dashboard/admin/EditJoueurGroup'
+import Presence from './dashboard/entraineur/Presence'
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
         <Route path="utilisateurs/entraineurs/add" element={<AddEntraineur />}/>
         <Route path="utilisateurs/child/add" element={<AddChild />}/>
 
+        <Route path="presence" element={<Presence />}/>
 
         <Route path="emploi" element={<Emploi />}/>
 
