@@ -305,7 +305,7 @@ const ListGroupes = () => {
                       Emploi du temps
                     </p>
                     <Link
-                      to={`/dashboard/groupes/${g.id}/emploi/edit`}
+                      to={g?.emploi?.length === 0 ?  `/dashboard/groupes/${g.id}/emploi/add` : `/dashboard/groupes/${g.id}/emploi/edit`}
                       className="btn-accent block text-center bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition w-full"
                     >
                       {g?.emploi?.length === 0 ? "↳ Créer" : "↳ Modifier"}

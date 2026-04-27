@@ -22,6 +22,9 @@ import EditJoueurGroup from './dashboard/admin/EditJoueurGroup'
 import Presence from './dashboard/entraineur/Presence'
 import EditEmploi from './dashboard/admin/EditEmploi'
 import Payment from './dashboard/joueur/Payment'
+import AddCategory from './dashboard/admin/AddCategory'
+import CategoriesList from './dashboard/admin/CategoriesList'
+import PlayersPaymentStatus from './dashboard/admin/PlayersPaymentStatus'
 
 const App = () => {
   return (
@@ -53,6 +56,15 @@ const App = () => {
         <Route path="presence" element={<Presence />}/>
 
         <Route path="emploi" element={<Emploi />}/>
+
+
+        <Route path="gestion-paiements" element={<CategoriesList />}/>
+
+        <Route path="gestion-paiements/add" element={<AddCategory />}/>
+        <Route path="paiements-joueurs" element={<PlayersPaymentStatus />}/>
+
+
+
 
 
       </Route>

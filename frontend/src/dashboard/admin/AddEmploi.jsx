@@ -12,8 +12,10 @@ const AddEmploi = () => {
   const navigate = useNavigate();
   console.log(error)
   const handleSelect = (info) => {
+    console.log(info)
     setError(false)
     const title = prompt("Titre de l'événement :")
+    console.log(title)
 
     if (title) {
      setEvents([
@@ -34,6 +36,7 @@ const AddEmploi = () => {
     setEvents(events.filter(e => e.id != info.event.id))
   }
 }
+console.log(events)
 const handleSubmit = async (e) => {
   e.preventDefault()
   if(events.length === 0){

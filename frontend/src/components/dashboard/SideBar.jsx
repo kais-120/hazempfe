@@ -16,6 +16,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const [child, setChild] = useState()
   const [currentChild, setCurrentChild] = useState(null)
   const navigate = useNavigate()
+  console.log(openUsers)
 
   useEffect(() => {
     const childData = async () => {
@@ -259,12 +260,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 </NavItem>
 
                 {/* DROPDOWN */}
-                <li>
+                <li className={openUsers ? "dropdown-open" : ""}>
                   <button
                     onClick={() => setOpenUsers(!openUsers)}
-                    className={`w-full dropdown-open flex items-center justify-between px-4 py-3 rounded-lg text-slate-300 hover:text-white transition group ${
-                      openUsers ? "bg-slate-700/40" : ""
-                    }`}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-300 hover:text-white transition group"
                   >
                     <span className="flex items-center gap-3">
                       <FaUsers className="nav-item-icon text-blue-400" size={16} />
@@ -293,7 +292,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <NavItem to="/dashboard/boutique" icon={<FaShoppingCart />}>
                   Boutique
                 </NavItem>
-                <NavItem to="/dashboard/paiements" icon={<FaMoneyCheckDollar />}>
+                <NavItem to="/dashboard/gestion-paiements" icon={<FaMoneyCheckDollar />}>
                   Gestion paiements
                 </NavItem>
                 <NavItem to="/dashboard/paiements-joueurs" icon={<HiMiniBanknotes />}>

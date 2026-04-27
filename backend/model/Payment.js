@@ -21,10 +21,12 @@ const Payment = sequelize.define("payment", {
   },
   method_payment: {
     type: DataTypes.ENUM("espèce","en ligne"),
-    allowNull: false,
   },
   amount:{
     type: DataTypes.FLOAT,
+  },
+  status:{
+    type: DataTypes.STRING,
   }
 })
 

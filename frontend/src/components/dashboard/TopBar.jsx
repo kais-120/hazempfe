@@ -9,10 +9,10 @@ const TopBar = ({ setIsOpen }) => {
 
   const getRoleLabel = (role) => {
     const labels = {
-      admin: "👨‍💼 Administrateur",
-      joueur: "⚽ Joueur",
-      entraineur: "🏋️ Entraîneur",
-      parent: "👨‍👩‍👧 Parent",
+      admin: "Administrateur",
+      joueur: "Joueur",
+      entraineur: "Entraîneur",
+      parent: "Parent",
     }
     return labels[role] || role
   }
@@ -127,62 +127,9 @@ const TopBar = ({ setIsOpen }) => {
                 {getRoleLabel(user?.role)}
               </p>
             </div>
-
-            {/* DROPDOWN ICON */}
-            <HiEllipsisVertical className="text-slate-400 group-hover:text-slate-300 transition" />
           </button>
 
-          {/* DROPDOWN MENU */}
-          {showDropdown && (
-            <div className="dropdown-fade absolute right-0 mt-2 w-72 rounded-xl user-card shadow-2xl overflow-hidden">
-              
-              {/* HEADER */}
-              <div className="p-4 border-b border-slate-700/30 bg-gradient-to-r from-blue-500/10 to-purple-500/10">
-                <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-full ${getAvatarColor(user?.role)} flex items-center justify-center font-bold text-white text-lg shadow-md`}>
-                    {user?.nom?.charAt(0)?.toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-bold text-white">{user?.nom}</p>
-                    <p className="text-xs text-slate-400">{getRoleLabel(user?.role)}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* DIVIDER */}
-              <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
-
-              {/* MENU ITEMS */}
-              <div className="p-3 space-y-2">
-                <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700/40 text-slate-300 hover:text-blue-400 transition font-medium text-sm text-left">
-                  <span>👤</span>
-                  <span>Voir mon profil</span>
-                </button>
-
-                <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700/40 text-slate-300 hover:text-blue-400 transition font-medium text-sm text-left">
-                  <span>⚙️</span>
-                  <span>Paramètres</span>
-                </button>
-
-                <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700/40 text-slate-300 hover:text-blue-400 transition font-medium text-sm text-left">
-                  <span>🔔</span>
-                  <span>Notifications</span>
-                  <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
-                </button>
-              </div>
-
-              {/* DIVIDER */}
-              <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
-
-              {/* LOGOUT */}
-              <div className="p-3">
-                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-300 transition font-semibold text-sm">
-                  <BiLogOut size={16} />
-                  <span>Déconnexion</span>
-                </button>
-              </div>
-            </div>
-          )}
+      
         </div>
       </div>
 

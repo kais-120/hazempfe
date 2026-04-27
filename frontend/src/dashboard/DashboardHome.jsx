@@ -20,7 +20,7 @@ const DashboardHome = () => {
         }
 
         .dashboard-container {
-          background: linear-gradient(135deg, #0f172a 0%, #1a2847 100%);
+          background: white;
           min-height: 100vh;
         }
 
@@ -57,12 +57,12 @@ const DashboardHome = () => {
         }
       `}</style>
 
-      <div className="dashboard-container flex h-screen">
+       <div className="dashboard-container flex h-screen">
         {/* SIDEBAR */}
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
-        {/* MAIN AREA */}
-        <div className="flex flex-col flex-1 lg:ml-0">
+        {/* MAIN AREA - Add left margin to account for fixed sidebar */}
+        <div className="flex flex-col flex-1 lg:ml-64"> {/* Changed from lg:ml-0 to lg:ml-64 */}
           {/* TOPBAR */}
           <TopBar setIsOpen={setIsOpen} />
 
