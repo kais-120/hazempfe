@@ -11,7 +11,7 @@ async function createAdmin (){
 
     }
     const hashed = await bcrypt.hash("123456",10);
-    await User.create({nom:"admin",prenom:"admin",email:"admin@admin.com",password:hashed,role:"admin",phone:"55740526",verified_at:Date.now()});
+    await User.create({nom:"admin",prenom:"admin",email:"admin@admin.com",password:hashed,role:"admin",num_tel:"55740526"});
     console.log("Admin created");
     process.exit();
     }catch(err){

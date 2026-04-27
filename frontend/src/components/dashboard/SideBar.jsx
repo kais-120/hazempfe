@@ -2,197 +2,361 @@ import { Link, NavLink, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useProfile } from "../../utils/context/useProfile"
 import { AxiosToken } from "../../Api/Api"
-import { FaCreditCard, FaRegCalendarAlt, FaShoppingCart, FaUser, FaUsers, FaUserTie } from "react-icons/fa";
-import { MdFamilyRestroom, MdGroupAdd, MdOutlinePayments, MdSpaceDashboard } from "react-icons/md";
-import { IoArrowDown, IoArrowUp, IoFootball } from "react-icons/io5";
-import { IoMdChatbubbles } from "react-icons/io";
-import { HiMiniBanknotes } from "react-icons/hi2";
-import { FaMoneyCheckDollar } from "react-icons/fa6";
+import { FaCreditCard, FaRegCalendarAlt, FaShoppingCart, FaUser, FaUsers, FaUserTie, FaSignOutAlt, FaFile } from "react-icons/fa"
+import { MdFamilyRestroom, MdGroupAdd, MdSpaceDashboard, MdAnalytics, MdOutlineAssignment } from "react-icons/md"
+import { IoArrowDown, IoArrowUp, IoFootball, IoClose } from "react-icons/io5"
+import { IoMdChatbubbles, IoMdTrendingUp } from "react-icons/io"
+import { HiMiniBanknotes, HiOutlineCalendarDays } from "react-icons/hi2"
+import { FaMoneyCheckDollar, FaBarChart } from "react-icons/fa6"
+import { BiMenu } from "react-icons/bi"
 
-
-
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
   const { user } = useProfile()
   const [openUsers, setOpenUsers] = useState(false)
-  const [child,setChild] = useState();
-  const [currentChild,setCurrentChild] = useState(null);
+  const [child, setChild] = useState()
+  const [currentChild, setCurrentChild] = useState(null)
   const navigate = useNavigate()
 
-  useEffect(()=>{
+  useEffect(() => {
     const childData = async () => {
-      if(user?.role !== "parent") return
-      try{
+      if (user?.role !== "parent") return
+      try {
         const child = window.localStorage.getItem("child")
         setCurrentChild(child)
-        const res = await AxiosToken.get("/user/parent/get/child");
+        const res = await AxiosToken.get("/user/parent/get/child")
         setChild(res.data.children)
-      }catch{
+      } catch {
         console.error("error")
       }
-      
     }
     childData()
-  },[user])
-console.log(currentChild)
+  }, [user])
+
+  const menuVariants = {
+    joueur: [
+      { to: "/dashboard/emploi", icon: <FaRegCalendarAlt />, label: "Emploi" },
+      { to: "/dashboard/paiement", icon: <FaCreditCard />, label: "Paiement" },
+      { to: "/dashboard/messages", icon: <IoMdChatbubbles />, label: "Messages" },
+      { to: "/dashboard/profil", icon: <FaUser />, label: "Profil" },
+      { to: "/dashboard/statistiques", icon: <MdSpaceDashboard />, label: "Statistiques" },
+    ],
+    entraineur: [
+      { to: "/dashboard/emploi", icon: <FaRegCalendarAlt />, label: "Emploi" },
+      { to: "/dashboard/joueurs", icon: <FaUsers />, label: "Joueurs" },
+      { to: "/dashboard/messages", icon: <IoMdChatbubbles />, label: "Messages" },
+      { to: "/dashboard/entrainements", icon: <MdOutlineAssignment />, label: "Entraînements" },
+      { to: "/dashboard/performance", icon: <IoMdTrendingUp />, label: "Performance" },
+      { to: "/dashboard/presence", icon: <HiOutlineCalendarDays />, label: "Présence" },
+      { to: "/dashboard/rapports", icon: <FaFile />, label: "Rapports" },
+    ],
+    admin: [
+      { to: "/dashboard/analyse", icon: <MdAnalytics />, label: "Analyse" },
+    ],
+    parent: [
+      { to: "/dashboard/emploi", icon: <FaRegCalendarAlt />, label: "Emploi" },
+      { to: "/dashboard/parent/paiement", icon: <FaCreditCard />, label: "Paiement" },
+      { to: "/dashboard/parent/messages", icon: <IoMdChatbubbles />, label: "Messages" },
+      { to: "/dashboard/parent/profil", icon: <FaUser />, label: "Profil enfant" },
+    ],
+  }
+
+  const currentMenu = menuVariants[user?.role] || []
+
   return (
-    <div className="w-64 h-screen bg-black text-white p-5 border-r border-yellow-500/20 shadow-lg flex flex-col">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
 
-      {/* BRAND */}
-      <h2 className="text-xl font-semibold uppercase tracking-widest border-b border-yellow-500/20 pb-4 mb-6">
-        <Link to={"/"}>Académie</Link>
-      </h2>
+        .sidebar-root {
+          font-family: 'Manrope', sans-serif;
+        }
 
-      <ul className="flex flex-col gap-1 text-sm">
+        .sidebar-brand {
+          font-family: 'Poppins', sans-serif;
+          background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
 
-        {user?.role === "joueur" && (
-          <>
-            <NavItem to="/dashboard/emploi" icon={<FaRegCalendarAlt />}>Emploi</NavItem>
-            <NavItem to="/dashboard/paiement" icon={<FaCreditCard /> }>Paiement</NavItem>
-            <NavItem to="/dashboard/messages" icon={<IoMdChatbubbles />}>Message</NavItem>
-            <NavItem to="/dashboard/profil" icon={<FaUser />}>Profil</NavItem>
-            <NavItem to="/dashboard/statistiques" icon={<MdSpaceDashboard />}>Statistiques</NavItem>
-          </>
-        )}
+        .nav-item-active {
+          position: relative;
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+          border-left: 3px solid #3b82f6;
+        }
 
-        {/* ================= COACH ================= */}
-        {user?.role === "entraineur" && (
-          <>
-            <NavItem to="/dashboard/emploi" icon="🏃">Emploi</NavItem>
-            <NavItem to="/dashboard/joueurs" icon="👥">Liste des joueurs</NavItem>
-            <NavItem to="/dashboard/messages" icon="💬">Message</NavItem>
-            <NavItem to="/dashboard/entrainements" icon="🏋️">Gestion entraînements</NavItem>
-            <NavItem to="/dashboard/performance" icon="📈">Suivi performance</NavItem>
-            <NavItem to="/dashboard/presence" icon="📅">Présence</NavItem>
-            <NavItem to="/dashboard/rapports" icon="📄">Rapports</NavItem>
-          </>
-        )}
+        .nav-item-active::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 3px;
+          background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 100%);
+          animation: slideIn 0.3s ease-out;
+        }
 
-        {/* ================= ADMIN ================= */}
-        {user?.role === "admin" && (
-          <>
-            <NavItem to="/dashboard/analyse" icon={<MdSpaceDashboard />}>Analyse de données</NavItem>
+        @keyframes slideIn {
+          from {
+            height: 0;
+          }
+          to {
+            height: 100%;
+          }
+        }
 
-            {/* USERS DROPDOWN */}
-            <li>
-              <button
-                onClick={() => setOpenUsers(!openUsers)}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-md text-white/60 hover:text-yellow-400 hover:bg-yellow-500/10 transition"
+        .nav-item {
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .nav-item:hover {
+          transform: translateX(4px);
+        }
+
+        .nav-item-icon {
+          transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover .nav-item-icon {
+          transform: scale(1.2) rotate(5deg);
+        }
+
+        .dropdown-arrow {
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .dropdown-open .dropdown-arrow {
+          transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.3s ease-out;
+        }
+
+        .dropdown-open .dropdown-menu {
+          max-height: 500px;
+          transition: max-height 0.5s ease-in;
+        }
+
+        .child-select {
+          background: rgba(59, 130, 246, 0.1);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          transition: all 0.3s;
+        }
+
+        .child-select:hover,
+        .child-select:focus {
+          background: rgba(59, 130, 246, 0.2);
+          border-color: rgba(59, 130, 246, 0.6);
+          outline: none;
+        }
+
+        .badge-new {
+          display: inline-block;
+          padding: 2px 8px;
+          background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+          border-radius: 999px;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+          animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.7;
+          }
+        }
+
+        .slide-out {
+          animation: slideOut 0.3s ease-out forwards;
+        }
+
+        @keyframes slideOut {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+        }
+      `}</style>
+
+      {/* SIDEBAR */}
+      <div
+        className={`sidebar-root fixed inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white border-r border-slate-700/50 shadow-2xl flex flex-col transition-all duration-300 ${
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
+        {/* BRAND */}
+        <div className="p-6 border-b border-slate-700/30 flex items-center justify-between">
+          <h2 className="sidebar-brand text-2xl font-bold tracking-wider">
+            <Link to="/" className="hover:opacity-80 transition">
+              ACADÉMIE
+            </Link>
+          </h2>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="lg:hidden p-2 hover:bg-slate-800 rounded-lg transition"
+          >
+            <IoClose size={20} />
+          </button>
+        </div>
+
+        {/* CONTENT */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          {/* PARENT - CHILD SELECTOR */}
+          {user?.role === "parent" && (
+            <div className="mb-6 p-4 border border-slate-700/50 rounded-xl bg-slate-800/30 backdrop-blur-sm">
+              <p className="text-xs text-slate-400 mb-3 font-semibold tracking-wider">
+                👶 ENFANT SÉLECTIONNÉ
+              </p>
+              <select
+                value={currentChild || ""}
+                onChange={(e) => {
+                  localStorage.setItem("child", e.target.value)
+                  window.location.reload()
+                }}
+                className="child-select w-full p-2.5 rounded-lg text-sm text-white font-medium cursor-pointer"
               >
-                <span className="flex items-center gap-2">
-                <FaUsers />
-                Liste utilisateurs
-                </span>
-                <span>{openUsers ? <IoArrowUp /> : <IoArrowDown />}</span>
+                <option value="" disabled>
+                  Sélectionner un enfant
+                </option>
+                {child?.map((item) => {
+                  const joueur = item.joueurParent
+                  return (
+                    <option key={joueur.id} value={joueur.id}>
+                      {joueur.nom} {joueur.prenom}
+                    </option>
+                  )
+                })}
+              </select>
+              <button
+                onClick={() => navigate("utilisateurs/child/add")}
+                className="mt-3 w-full text-sm text-blue-400 hover:text-blue-300 font-semibold transition flex items-center justify-center gap-1"
+              >
+                + Ajouter enfant
               </button>
+            </div>
+          )}
 
-              {openUsers && (
-                <div className="ml-6 mt-1 flex flex-col gap-1 border-l border-yellow-500/20 pl-3">
+          {/* MENU ITEMS */}
+          <ul className="space-y-1">
+            {/* Admin - Users Dropdown */}
+            {user?.role === "admin" && (
+              <>
+                <NavItem to="/dashboard/analyse" icon={<MdAnalytics />}>
+                  Analyse de données
+                </NavItem>
 
-                  <NavItem to="/dashboard/utilisateurs/joueurs" icon={<IoFootball />}>
-                    Joueurs
-                  </NavItem>
+                {/* DROPDOWN */}
+                <li>
+                  <button
+                    onClick={() => setOpenUsers(!openUsers)}
+                    className={`w-full dropdown-open flex items-center justify-between px-4 py-3 rounded-lg text-slate-300 hover:text-white transition group ${
+                      openUsers ? "bg-slate-700/40" : ""
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <FaUsers className="nav-item-icon text-blue-400" size={16} />
+                      <span className="font-medium">Utilisateurs</span>
+                    </span>
+                    <span className="dropdown-arrow">
+                      <IoArrowDown size={14} />
+                    </span>
+                  </button>
 
-                  <NavItem to="/dashboard/utilisateurs/parents" icon={<MdFamilyRestroom />}>
-                    Parents
-                  </NavItem>
+                  {/* SUBMENU */}
+                  <div className={`dropdown-menu ml-4 mt-1 flex flex-col gap-1 border-l-2 border-slate-700/50 pl-4 ${openUsers ? "open" : ""}`}>
+                    <NavItem to="/dashboard/utilisateurs/joueurs" icon={<IoFootball />}>
+                      Joueurs
+                    </NavItem>
+                    <NavItem to="/dashboard/utilisateurs/parents" icon={<MdFamilyRestroom />}>
+                      Parents
+                    </NavItem>
+                    <NavItem to="/dashboard/utilisateurs/entraineurs" icon={<FaUserTie />}>
+                      Entraîneurs
+                    </NavItem>
+                  </div>
+                </li>
 
-                  <NavItem to="/dashboard/utilisateurs/entraineurs" icon={<FaUserTie />}>
-                    Entraîneurs
-                  </NavItem>
+                {/* ADMIN MENU */}
+                <NavItem to="/dashboard/boutique" icon={<FaShoppingCart />}>
+                  Boutique
+                </NavItem>
+                <NavItem to="/dashboard/paiements" icon={<FaMoneyCheckDollar />}>
+                  Gestion paiements
+                </NavItem>
+                <NavItem to="/dashboard/paiements-joueurs" icon={<HiMiniBanknotes />}>
+                  Paiements joueurs
+                </NavItem>
+                <NavItem to="/dashboard/messages" icon={<IoMdChatbubbles />}>
+                  Messages
+                </NavItem>
+                <NavItem to="/dashboard/groupes" icon={<MdGroupAdd />}>
+                  <span className="flex items-center gap-2">
+                    Groupes <span className="badge-new">NOUVEAU</span>
+                  </span>
+                </NavItem>
+              </>
+            )}
 
-                </div>
-              )}
-            </li>
+            {/* GENERIC MENU */}
+            {currentMenu.map((item) => (
+              <NavItem key={item.to} to={item.to} icon={item.icon}>
+                {item.label}
+              </NavItem>
+            ))}
+          </ul>
+        </div>
 
-            <NavItem to="/dashboard/boutique" icon={<FaShoppingCart />}>Boutique</NavItem>
-            <NavItem to="/dashboard/boutique" icon={<FaMoneyCheckDollar />}>Gestion des paiements</NavItem>
-            <NavItem to="/dashboard/messages" icon={<HiMiniBanknotes />}>Paiements des joueurs</NavItem>
-            <NavItem to="/dashboard/messages" icon={<IoMdChatbubbles />}>Message</NavItem>
-            <NavItem to="/dashboard/groupes" icon={<MdGroupAdd />}>Groupes</NavItem>
-          </>
-        )}
+        {/* FOOTER */}
+        <div className="p-4 border-t border-slate-700/30 mt-auto">
+          <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-red-500/20 text-slate-300 hover:text-red-400 transition font-medium">
+            <FaSignOutAlt size={14} />
+            Déconnexion
+          </button>
+        </div>
+      </div>
 
-        {user?.role === "parent" && (
-  <>
-    <div className="mb-4 border-b border-yellow-500/20 pb-3">
-
-      <p className="text-xs text-white/50 mb-2">
-        Enfant sélectionné
-      </p>
-
-      <select 
-      value={currentChild}
-      onChange={(e) => {
-      localStorage.setItem("child", e.target.value)
-      window.location.reload()
-      }}
-     className="w-full cursor-pointer bg-black border border-yellow-500/20 p-2 rounded text-sm text-white">
-          <option selected disabled>selection un entant</option>
-    {child?.map((item) => {
-      const joueur = item.joueurParent
-
-      return (
-        <option onClick={()=>{
-          
-        }} key={joueur.id} value={joueur.id}>
-          {joueur.nom}
-        </option>
-      )
-    })}
-
-  </select>
-
-  <button
-    onClick={() => navigate("utilisateurs/child/add")}
-    className="mt-2 text-yellow-400 text-sm hover:underline"
-  >
-    + Ajouter un enfant
-  </button>
-
-    </div>
-
-    {/* MENU */}
-    <NavItem to="/dashboard/emploi" icon={<FaRegCalendarAlt /> }>
-      Emploi
-    </NavItem>
-
-    <NavItem to="/dashboard/parent/paiement" icon="💳">
-      Paiement
-    </NavItem>
-
-    <NavItem to="/dashboard/parent/messages" icon="💬">
-      Messages
-    </NavItem>
-
-    <NavItem to="/dashboard/parent/profil" icon="👤">
-      Profil enfant
-    </NavItem>
-  </>
-)}
-
-      </ul>
-    </div>
+      {/* OVERLAY */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+    </>
   )
 }
 
-/* Reusable item */
+/* Reusable NavItem */
 function NavItem({ to, icon, children }) {
   return (
     <li>
-  <NavLink
-    to={to}
-    className={({ isActive }) =>
-      `flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 ${
-        isActive
-          ? "text-yellow-400 bg-yellow-500/10"
-          : "text-white/60 hover:text-yellow-400 hover:bg-yellow-500/10"
-      }`
-    }
-  >
-    {icon}
-    {children}
-  </NavLink>
-</li>
+      <NavLink
+        to={to}
+        className={({ isActive }) =>
+          `nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+            isActive
+              ? "nav-item-active text-blue-400 font-semibold"
+              : "text-slate-400 hover:text-white hover:bg-slate-700/40"
+          }`
+        }
+      >
+        <span className="nav-item-icon">{icon}</span>
+        <span>{children}</span>
+      </NavLink>
+    </li>
   )
 }
 
