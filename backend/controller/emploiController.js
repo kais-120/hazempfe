@@ -22,6 +22,55 @@ exports.addEmploi = [
 }
 ]
 
+exports.getEmploiById =  async (req,res) => {
+        try{
+        const {id} = req.params;
+        const emplois = await Groupe.findByPk(id,{
+            include:[
+                {
+                    model:Emploi,
+                    as:"emploi"
+                }
+            ]
+        })
+        if(!emplois){
+            return res.status(404).json({ message: "emploi not found"});
+        }
+        return res.status(200).json({ message: "emploi found",emplois});
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({message:"error server"});
+    }
+
+}
+
+exports.uodateEmploi = [
+    async (req,res) => {
+        try{
+        const {emploi,deleteEvents} = req.body;
+        const {id} = req.params;
+        if(deleteEvents.length > 0){
+            for(const id of deleteEvents){
+                await Emploi.destroy({where :{id}});
+            }
+        }
+        for(const e of emploi){
+            const start = new Date(e.start)
+            const end = new Date(e.end)
+            const jour = start.getDay() 
+            const heure_debut = start.toTimeString().slice(0,5)
+            const heure_fin = end.toTimeString().slice(0,5)
+            await Emploi.create({titre:e.title,jour,heure_debut,heure_fin,groupe_id:id})
+    }
+        return res.status(200).json({ message: "emploi updated"});
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({message:"error server"});
+    }
+
+}
+]
+
 exports.getJoueurEmploi =  async (req,res) => {
         try{
         const userId = req.userId;

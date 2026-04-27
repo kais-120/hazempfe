@@ -2,12 +2,13 @@ import React from 'react'
 import Cookies from 'universal-cookie'
 import { Navigate, Outlet } from 'react-router-dom';
 import { useProfile } from '../utils/context/useProfile';
+import LoadingScreen from '../components/pages/LoadingScreen';
 
 const RoleProtection = ({ allowRole }) => {
   const { user, loading } = useProfile()
 
   if (loading) {
-    return <p>Loading...</p>
+    return <LoadingScreen />
   }
 
   if (!user) {

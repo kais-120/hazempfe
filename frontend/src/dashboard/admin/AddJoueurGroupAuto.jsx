@@ -1,26 +1,32 @@
 import { useEffect, useState } from "react"
 import { AxiosToken } from "../../Api/Api"
+import { useNavigate, useParams } from "react-router-dom"
 
 const AddJoueurGroupAuto = () => {
-  const [groups, setGroups] = useState([])
-  const [groupId, setGroupId] = useState("")
-  const [type, setType] = useState("")
+  const [groupAge, setGroupAge] = useState("")
   const [count, setCount] = useState(0)
-
   const [loading, setLoading] = useState(false)
+  const {id} = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchGroups = async () => {
-      const res = await AxiosToken.get("/group")
-      setGroups(res.data.groups)
+    const fetchGroup = async () => {
+      try {
+        const res = await AxiosToken.get(
+          `/group/get/${id}`
+        )
+        setGroupAge(res.data.group)
+
+      } catch (err) {
+        navigate(-1)
+      }
     }
+    fetchGroup()
+  },[id,navigate])
 
-    fetchGroups()
-  }, [])
 
-  // 🔥 submit
   const handleSubmit = async () => {
-    if (!groupId || !type || !count) {
+    if (!count) {
       alert("Remplir tous les champs")
       return
     }
@@ -29,67 +35,32 @@ const AddJoueurGroupAuto = () => {
       setLoading(true)
 
       const res = await AxiosToken.post(
-        `/group/${groupId}/add-joueurs-auto`,
+        `/group/${id}/add-joueurs-auto`,
         {
-          type,
+          type:groupAge.type,
           count: Number(count),
         }
       )
 
       alert(res.data.message)
 
-      setType("")
       setCount(0)
 
     } catch (err) {
       console.log(err)
-      alert(err.response?.data?.message || "Erreur")
+      alert("Pas assez de joueurs disponibles")
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
+    <div className="p-6">
 
       <h1 className="text-2xl font-bold mb-6">
-        Ajout automatique de joueurs
+        Ajout automatique de joueurs pour groupe {groupAge.libelle}
       </h1>
 
-      {/* GROUP */}
-      <div className="mb-4">
-        <label>Groupe</label>
-        <select
-          value={groupId}
-          onChange={(e) => setGroupId(e.target.value)}
-          className="w-full border p-2 rounded"
-        >
-          <option value="">-- choisir groupe --</option>
-          {groups.map(g => (
-            <option key={g.id} value={g.id}>
-              {g.libelle}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* CATEGORY */}
-      <div className="mb-4">
-        <label>Catégorie</label>
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="w-full border p-2 rounded"
-        >
-          <option value="">-- choisir catégorie --</option>
-          <option value="U4">U4</option>
-          <option value="U8">U8</option>
-          <option value="U12">U12</option>
-          <option value="U16">U16</option>
-        </select>
-      </div>
-
-      {/* COUNT */}
       <div className="mb-4">
         <label>Nombre de joueurs</label>
         <input

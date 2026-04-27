@@ -20,6 +20,8 @@ import ListJoueursGroupe from './dashboard/admin/ListJoueursGroupe'
 import AddChild from './dashboard/admin/Users/AddChild'
 import EditJoueurGroup from './dashboard/admin/EditJoueurGroup'
 import Presence from './dashboard/entraineur/Presence'
+import EditEmploi from './dashboard/admin/EditEmploi'
+import Payment from './dashboard/joueur/Payment'
 
 const App = () => {
   return (
@@ -33,6 +35,7 @@ const App = () => {
       <Route path='/dashboard' element={<DashboardHome />}>
         <Route path="groupes" element={<Groups />}/>
         <Route path="groupes/:id/emploi/add" element={<AddEmploi />}/>
+        <Route path="groupes/:id/emploi/edit" element={<EditEmploi />}/>
         <Route path="groupes/add" element={<AddGroupe />}/>
         <Route path="groupes/:id/joueurs/add" element={<AddJoueurGroupManual />}/>
         <Route path="groupes/:id/joueurs/edit" element={<EditJoueurGroup />}/>
@@ -44,6 +47,8 @@ const App = () => {
         <Route path="utilisateurs/joueurs" element={<ListeJoueur />}/>
         <Route path="utilisateurs/entraineurs/add" element={<AddEntraineur />}/>
         <Route path="utilisateurs/child/add" element={<AddChild />}/>
+
+        <Route path="paiement" element={<Payment />} />
 
         <Route path="presence" element={<Presence />}/>
 

@@ -129,7 +129,7 @@ const ListGroupes = () => {
 
       <td className="p-3 text-center">
         <Link
-          to={`/dashboard/groupes/${g.id}/emploi/add`}
+          to={`/dashboard/groupes/${g.id}/emploi/edit`}
           className="text-sm bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded-md transition"
         >
           {g?.emploi.length === 0 ? "+ Emploi"  : "Modifier" }
