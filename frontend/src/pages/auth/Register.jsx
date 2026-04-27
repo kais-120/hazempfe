@@ -189,7 +189,7 @@ const Register = () => {
                     <div>
 
                         <Select
-                            label="Rôle"
+                            label="Type de compte"
                             name="role"
                              formik={formik}
 

@@ -1,4 +1,4 @@
-import galleryCoachPlayer from "../assets/images/gallery_coach_player.png"
+import galleryCoachPlayer from "../assets/images/img12.jpeg"
 
 const ConceptSection = () => {
   return (
