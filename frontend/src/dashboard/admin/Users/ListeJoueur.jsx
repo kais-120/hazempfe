@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
 import { AxiosToken } from "../../../Api/Api"
+import LoadingScreen from "../../../components/pages/LoadingScreen"
 
 const ListeJoueur = () => {
   const [joueurs, setJoueurs] = useState([])
@@ -22,7 +22,7 @@ const ListeJoueur = () => {
       setLoading(false)
     }
   }
-
+if(loading) return <LoadingScreen />
   return (
     <div className="p-6">
 
@@ -58,8 +58,8 @@ const ListeJoueur = () => {
 
                   <td className="p-3">{e.nom}</td>
                   <td className="p-3">{e.prenom}</td>
-                  <td className="p-3">{e.email}</td>
-                  <td className="p-3">{e.num_tel}</td>
+                  <td className="p-3">{e?.email || "--"}</td>
+                  <td className="p-3">{e?.num_tel || "--"}</td>
 
                   <td className="p-3 flex gap-2">
                     <button className="text-blue-600 hover:underline">

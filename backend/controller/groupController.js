@@ -58,6 +58,19 @@ exports.getGroups = async (req, res) => {
     }
 }
 
+exports.getGroupById = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const group = await Groupe.findByPk(id);
+        if (!group) {
+            return res.status(404).json({ message: "groups not found" })
+        }
+        return res.json({ message: "group found", group })
+    } catch (err) {
+        return res.status(500).json({ message: err });
+    }
+}
+
 exports.addJoueurGroupManual = [
     body("players").notEmpty().withMessage("players id is required"),
     async (req, res) => {

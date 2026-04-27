@@ -93,8 +93,8 @@ const Login = () => {
                 },2000)
                 setSuccess("Connexion réussie");
             } catch {
-                setError("Erreur login")
                 setIsLoading(false)
+                setError("Erreur login")
             }
         }
     })

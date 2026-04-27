@@ -1,28 +1,43 @@
 import { useEffect, useState } from "react"
 import { AxiosToken } from "../../Api/Api"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 const AddJoueurGroupManual = () => {
   const [players, setPlayers] = useState([])
   const [type, setType] = useState("")
   const [selectedPlayers, setSelectedPlayers] = useState([])
   const [error, setError] = useState("")
+  const [groupAge, setGroupAge] = useState("")
   const [loading, setLoading] = useState(false)
 
   const { id } = useParams()
+  const navigate = useNavigate()
 
-  // 🔥 fetch players by category
+  useEffect(() => {
+    const fetchGroup = async () => {
+      try {
+        const res = await AxiosToken.get(
+          `/group/get/${id}`
+        )
+        setGroupAge(res.data.group)
+
+      } catch (err) {
+        navigate(-1)
+      }
+    }
+    fetchGroup()
+  },[id,navigate])
+
   useEffect(() => {
     const fetchPlayers = async () => {
-      if (!type) return
-
+      if (!groupAge) return
       try {
         setError("")
         setPlayers([])
         setSelectedPlayers([])
 
         const res = await AxiosToken.get(
-          `/user/get/joueur/age/${type}`
+          `/user/get/joueur/age/${groupAge.type}`
         )
 
         setPlayers(res.data.players)
@@ -38,9 +53,8 @@ const AddJoueurGroupManual = () => {
     }
 
     fetchPlayers()
-  }, [type])
+  }, [groupAge])
 
-  // 🔥 select / unselect player
   const togglePlayer = (player) => {
     const exists = selectedPlayers.find(p => p.id === player.id)
 
@@ -81,42 +95,13 @@ const AddJoueurGroupManual = () => {
       setLoading(false)
     }
   }
-
+  if(players.length === 0) return "Aucuns des joueurs disponible"
   return (
     <div className="p-6 max-w-4xl mx-auto">
 
       <h1 className="text-2xl font-bold mb-6">
-        Ajouter joueurs à un groupe
+        Ajouter joueurs pour groupe {groupAge.libelle}
       </h1>
-
-      {/* CATEGORY SELECT */}
-      <div className="mb-4">
-        <label className="text-sm font-medium">
-          Catégorie
-        </label>
-
-        <select
-          value={type}
-          onChange={(e) => {
-            setType(e.target.value)
-            setError("")
-          }}
-          className="border p-2 rounded w-full mt-1"
-        >
-          <option selected disabled value="">-- Choisir catégorie --</option>
-          <option value="U4">U4</option>
-          <option value="U8">U8</option>
-          <option value="U12">U12</option>
-          <option value="U16">U16</option>
-        </select>
-
-        {/* 🔥 ERROR MESSAGE */}
-        {error && (
-          <p className="text-red-500 text-sm mt-2">
-            {error}
-          </p>
-        )}
-      </div>
 
       {/* LIST */}
       {type && !error && (
