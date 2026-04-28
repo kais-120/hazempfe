@@ -40,6 +40,7 @@ export default function PlayersPaymentStatus() {
                 <th className="p-3 text-left">Prénom</th>
                 <th className="p-3 text-left">Statut</th>
                 <th className="p-3 text-left">Date paiement</th>
+                <th className="p-3 text-left">Action</th>
               </tr>
             </thead>
 

@@ -31,6 +31,9 @@ const User = sequelize.define("users",{
     role:{
         type:DataTypes.ENUM("admin","entraineur","joueur","parent"),
     },
+    joueurLevel:{
+        type:DataTypes.ENUM("débutant", "intermédiaire", "avancé"),
+    },
 })
 
 module.exports = User;
