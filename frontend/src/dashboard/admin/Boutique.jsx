@@ -71,7 +71,7 @@ export default function ProductsTable() {
               <tr key={p.id}>
                 <td className="border p-2">
                   <img
-                    src={`http://localhost:3000/uploads/${p.image}`}
+                    src={`http://localhost:5000/uploads/${p.image}`}
                     alt=""
                     className="w-16 h-16 object-cover"
                   />

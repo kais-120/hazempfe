@@ -5,9 +5,9 @@ import { AxiosToken } from "../../Api/Api";
 import { useNavigate } from "react-router-dom";
 
 const validationSchema = Yup.object({
-  titre: Yup.string().required("Titre is required"),
-  description: Yup.string().required("Description is required"),
-  price: Yup.number().required("Price required"),
+  titre: Yup.string().required("Titre est requis"),
+  description: Yup.string().required("Description est requis"),
+  price: Yup.number().required("Price est requis"),
   discount: Yup.number(),
 });
 
@@ -35,7 +35,7 @@ export default function CreateProduct() {
 
       await AxiosToken.post("/product", data);
 
-      alert("Product created ✅");
+      alert("Product created");
       navigate(-1)
       }catch{
         console.error("error")
@@ -56,7 +56,7 @@ export default function CreateProduct() {
           value={formik.values.titre}
           className="border p-2 w-full"
         />
-        {formik.errors.titre && <p className="text-red-500">{formik.errors.titre}</p>}
+        {formik.touched.titre && <p className="text-red-500">{formik.errors.titre}</p>}
 
         <input
           type="text"
@@ -66,7 +66,7 @@ export default function CreateProduct() {
           value={formik.values.description}
           className="border p-2 w-full"
         />
-        {formik.errors.description && (
+        {formik.touched.description && (
           <p className="text-red-500">{formik.errors.description}</p>
         )}
 
@@ -78,7 +78,7 @@ export default function CreateProduct() {
           value={formik.values.price}
           className="border p-2 w-full"
         />
-        {formik.errors.price && <p className="text-red-500">{formik.errors.price}</p>}
+        {formik.touched.price && <p className="text-red-500">{formik.errors.price}</p>}
 
         <input
           type="number"

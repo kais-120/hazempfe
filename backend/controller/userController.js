@@ -192,3 +192,21 @@ exports.getChild =  async (req,res) => {
     }
 }
 
+exports.playersNoLevel =  async (req,res) => {
+        try{
+        const users = await User.findAll({
+            where:{
+                role:"joueur",
+                joueurLevel:null
+            },
+            attributes:{exclude:["password"]}
+        });
+        if(users.length === 0){
+            return res.status(404).json({message:"all players have level"});
+        }
+        return res.status(201).json({message:"player not level",users});
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({message:"server error"});
+    }
+}

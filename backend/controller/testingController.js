@@ -3,7 +3,6 @@ const { User } = require("../model");
 const TestJoueur = require("../model/TestJoueur");
 
 exports.createTest = [
-    body("joueur_id").notEmpty().withMessage("joueur id is required"),
     body("entraineur_id").notEmpty().withMessage("entraineur id is required"),
     body("date_test").notEmpty().withMessage("date is required"),
     body("time_test").notEmpty().withMessage("time is required"),
@@ -13,13 +12,18 @@ exports.createTest = [
             return res.status(422).json({ errors: errors.array().map(err => err.msg) });
         }
         try{
-        const {joueur_id,entraineur_id,date_test,time_test} = req.body;
-        const joueur = await User.findByPk(joueur_id);
+        const {joueurs_id,entraineur_id,date_test,time_test} = req.body;
+        
         const entraineur= await User.findByPk(entraineur_id);
-        if(joueur || entraineur){
+        if(!entraineur){
             return res.status(404).json({message:"users not found"});
         }
-        await TestJoueur.create({joueur_id,entraineur_id,date_test,time_test});
+        if(joueurs_id.length > 0){
+
+            for(const id of joueurs_id){
+                await TestJoueur.create({joueur_id:id,entraineur_id,date_test,time_test});
+            }
+        }
         return res.json({message:"test created"});
 
         
@@ -29,6 +33,31 @@ exports.createTest = [
     }
 }
 ]
+
+exports.getTesting = async(req,res) => {
+    try{
+        const userId = req.userId
+        const tests = await TestJoueur.findAll({
+            include:[
+                {
+                    model:User,
+                    as:"entraineurTester",
+                    attributes:["nom","prenom"]
+                },
+                {
+                    model:User,
+                    as:"joueurTester",
+                    attributes:["nom","prenom"]
+                }
+            ]
+        })
+        return res.json({message:"testing",tests});
+
+    }catch{
+        return res.status(500).json({message:"server error"});
+    }
+}
+
 exports.getTestEntraineur = async(req,res) => {
     try{
         const userId = req.userId

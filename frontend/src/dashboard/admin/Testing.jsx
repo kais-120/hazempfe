@@ -12,7 +12,7 @@ export default function Testing() {
 
   const fetchTests = async () => {
     try {
-      const res = await AxiosToken.get("/test-joueur");
+      const res = await AxiosToken.get("/testing");
       setTests(res.data.tests);
     } catch {
       console.error("Erreur");
@@ -45,7 +45,7 @@ export default function Testing() {
         </button>
       </div>
 
-      <table className="w-full border">
+      <table className="w-full border text-center border-black-1">
         <thead>
           <tr className="bg-gray-200">
             <th>Date</th>
@@ -62,22 +62,11 @@ export default function Testing() {
               <tr key={t.id}>
                 <td>{t.date_test}</td>
                 <td>{t.time_test}</td>
-                <td>{t.joueur?.name}</td>
-                <td>{t.entraineur?.name}</td>
+                <td>{t.joueurTester?.nom}</td>
+                <td>{t.entraineurTester?.nom}</td>
 
                 <td>
-                  <select
-                    value={t.status}
-                    onChange={(e) =>
-                      handleStatusChange(t.id, e.target.value)
-                    }
-                    className="border p-1 rounded"
-                  >
-                    <option value="programmé">Programmé</option>
-                    <option value="done">Terminé</option>
-                    <option value="accepté">Accepté</option>
-                    <option value="absent">Absent</option>
-                  </select>
+                  {t.status}
                 </td>
               </tr>
             ))

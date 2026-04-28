@@ -17,7 +17,7 @@ router.use("/emploi",emploiRoute)
 router.use("/presence",absencesRoute)
 router.use("/payment",paymentRouter)
 router.use("/pricing",pricingCategoriesRouter)
-router.use("/testingRouter",testingRouter)
+router.use("/testing",testingRouter)
 router.use("/product",productRouter)
 
 module.exports = router;

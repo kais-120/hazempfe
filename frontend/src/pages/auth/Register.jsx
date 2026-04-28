@@ -39,7 +39,7 @@ export const validationSchema = Yup.object({
         }),
 });
 
- function Input({ label, name, type = "text", formik }) {
+ function Input({ label, name, type = "text", formik,emailError,phoneError,emailPhoneError }) {
         return (
             <div className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-slate-700">{label}</label>
@@ -63,6 +63,13 @@ export const validationSchema = Yup.object({
                 {formik.touched[name] && formik.errors[name] && (
                     <p className="text-red-500 text-sm">{formik.errors[name]}</p>
                 )}
+                 {(emailError) && (
+                    <p className="text-red-500 text-sm">Email déja existe</p>
+                )}
+                {(phoneError) && (
+                    <p className="text-red-500 text-sm">numéro de télèphone déja existe</p>
+                )}
+               
             </div>
         );
     }
@@ -124,6 +131,8 @@ const Register = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const [emailError,setEmailError] = useState(false);
+    const [phoneError,setPhoneError] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -142,12 +151,23 @@ const Register = () => {
         onSubmit: async (values) => {
             try {
                 setIsLoading(true);
+                setEmailError(false)
+                setPhoneError(false)
                 await Axios.post("/auth/register", values);
                 setTimeout(()=>{
                     navigate("/login")
                 },2000)
-            } catch {
+            }catch(err){
+          const error = err.response.data.errors
+          if(error.email && error.phone){
+            setEmailError(true)
+            setPhoneError(true)
 
+          }else if(error.email){
+            setEmailError(true)
+          }else{
+            setPhoneError(true)
+          }
             } finally {
                 setIsLoading(false);
             }
@@ -183,7 +203,7 @@ const Register = () => {
                     </div>
 
                     {/* EMAIL */}
-                    <Input label="Email" name="email" type="email"  formik={formik} />
+                    <Input label="Email" emailError={emailError} name="email" type="email"  formik={formik} />
 
                     {/* ROLE + GROUP */}
                     <div>
@@ -227,7 +247,7 @@ const Register = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                         <Input label="Addresse" name="addresse"  formik={formik} />
-                        <Input label="Téléphone" name="num_tel"  formik={formik} />
+                        <Input label="Téléphone" phoneError={phoneError}  name="num_tel"  formik={formik} />
 
                     </div>
 

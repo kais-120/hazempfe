@@ -37,6 +37,8 @@ export const validationSchema = Yup.object({
 const AddEntraineur = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [emailError,setEmailError] = useState(false);
+  const [phoneError,setPhoneError] = useState(false);
   const pathParts = window.location.pathname.split("/")
 
   const role = pathParts[3]
@@ -59,19 +61,26 @@ const AddEntraineur = () => {
     onSubmit : async (values) => {
         try{
             setLoading(true)
+            setEmailError(false)
+            setPhoneError(false)
             await AxiosToken.post("user/add",values);
-        }catch{
-            console.error("error")
+            navigate(-1)
+        }catch(err){
+          const error = err.response.data.errors
+          if(error.email && error.phone){
+              setEmailError(true)
+              setPhoneError(true)
+          }else if(error.email){
+            setEmailError(true)
+          }else{
+            setPhoneError(true)
+          }
         }finally{
             setLoading(false)
         }
     }
   })
 
-
-
-
- 
   return (
     <div className="p-6 max-w-3xl mx-auto">
 
@@ -88,9 +97,9 @@ const AddEntraineur = () => {
 
           <Input name="nom" label="Nom" value={formik.values.nom} onChange={formik.handleChange} />
           <Input name="prenom" label="Prénom" value={formik.values.prenom} onChange={formik.handleChange} />
-          <Input name="email" label="Email" value={formik.values.email} onChange={formik.handleChange} />
-          <Input name="password" label="Mot de passe" type="password" value={formik.values.password} onChange={formik.handleChange} />
-          <Input name="num_tel" label="Téléphone" value={formik.values.num_tel} onChange={formik.handleChange} />
+          <Input name="email" email={emailError}  label="Email" value={formik.values.email} onChange={formik.handleChange} />
+          <Input name="password"  label="Mot de passe" type="password" value={formik.values.password} onChange={formik.handleChange} />
+          <Input name="num_tel" phone={phoneError}  label="Téléphone" value={formik.values.num_tel} onChange={formik.handleChange} />
           <Input name="addresse" label="Adresse" value={formik.values.addresse} onChange={formik.handleChange} />
           <Input name="dateNaissance" label="Date de naissance" type="date" value={formik.values.dateNaissance} onChange={formik.handleChange} />
 
@@ -122,7 +131,8 @@ const AddEntraineur = () => {
 }
 
 /* Reusable input */
-function Input({ label, name, value, onChange, type = "text" }) {
+function Input({ label, name, value, onChange, type = "text",phone,email }) {
+  console.log(email)
   return (
     <div className="flex flex-col gap-1">
       <label className="text-sm text-gray-600">{label}</label>
@@ -134,6 +144,12 @@ function Input({ label, name, value, onChange, type = "text" }) {
         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
         required
       />
+      {(email) && (
+          <p className="text-red-500 text-sm">Email déja existe</p>
+      )}
+      {(phone) && (
+          <p className="text-red-500 text-sm">numéro de télèphone déja existe</p>
+      )}
     </div>
   )
 }

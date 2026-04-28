@@ -33,11 +33,15 @@ exports.createProduct = [
         if(!errors.isEmpty()){
             return res.status(422).json({ errors: errors.array().map(err => err.msg) });
         }
+        if(req.file === undefined){
+            return res.status(422).json({errors:"image is required"});
+        }
     try{
         const {titre,description,price,discount} = req.body
-        await Product.create({titre,description,price,discount})
+        await Product.create({titre,description,price,discount,image:req.file.filename})
         return res.json({message:"product is created"});
-    }catch{
+    }catch(err){
+        console.log(err)
         return res.status(500).json({message:"error server"});
     }
 }
