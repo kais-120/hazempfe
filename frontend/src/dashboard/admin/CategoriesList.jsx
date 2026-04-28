@@ -11,9 +11,8 @@ export default function CategoriesList() {
     try {
       const res = await AxiosToken.get("/pricing");
       setCategories(res.data.categories || res.data);
-    } catch (err) {
-      console.log(err);
-      alert("Erreur lors du chargement");
+    } catch{
+      console.error("error");
     } finally {
       setLoading(false);
     }

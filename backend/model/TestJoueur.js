@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const User = require("./User");
 
-const TestJoueur = sequelize.define("groupe",{
+const TestJoueur = sequelize.define("test_joueur",{
     id:{
         type:DataTypes.BIGINT,
         primaryKey:true,

@@ -9,18 +9,19 @@ exports.addGroup = [
     body("libelle").notEmpty().withMessage("libelle is required"),
     body("entraineur_id").notEmpty().withMessage("entraineur id is required"),
     body("type").notEmpty().withMessage("type is required"),
+    body("level").notEmpty().withMessage("type is required"),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array().map(err => err.msg) });
         }
         try {
-            const { libelle, entraineur_id,type } = req.body;
+            const { libelle, entraineur_id,type,level } = req.body;
             const existliblle = await Groupe.findOne({ where: { libelle } });
             if (existliblle) {
                 return res.status(422).json({ message: "libelle is already used" });
             }
-            await Groupe.create({ libelle, entraineur_id,type })
+            await Groupe.create({ libelle, entraineur_id,age_id:type,level })
             return res.status(201).json({ message: "group created" });
         } catch (err) {
             console.log(err)

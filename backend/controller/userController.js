@@ -2,7 +2,7 @@ const { body, validationResult, param } = require("express-validator")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
-const { Groupe, GroupeJoueur, ParentChild } = require("../model");
+const { Groupe, GroupeJoueur, ParentChild, PricingCategories } = require("../model");
 const { Op } = require("sequelize");
 const sequelize = require("../config/db");
 
@@ -84,24 +84,26 @@ exports.profile = async (req,res) => {
     }
 }
 
-exports.getJoueurByAge = [
-    param("type").isIn(["U4","U8","U12","U16"]).withMessage("type invalid"),
-async (req,res) => {
-    const errors = validationResult(req);
-        if(!errors.isEmpty()){
-            return res.status(422).json({ errors: errors.array().map(err => err.msg) });
-        }
+exports.getJoueurByAge =  async (req,res) => {
         try{
-            const {type} = req.params;
-             const ageMap = {
-        U4: [4, 7],
-        U8: [8, 11],
-        U12: [12, 15],
-        U16: [16, 99],
-      }
+            const {id} = req.params;
+            const group = await PricingCategories.findOne({
+                include:[
+                    {
+                        model:Groupe,
+                        as:"groupePricing",
+                        where: {id:id},
+                        attributes:["level"]
+                    }
+                ]
+            })
+           if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+            }
       const today = new Date()
 
-        const [min, max] = ageMap[type]
+        const min = group.min_age;
+        const max = group.max_age;
 
         const minDate = new Date(
             today.getFullYear() - max,
@@ -116,22 +118,24 @@ async (req,res) => {
         )
 
         let players = await User.findAll({
-  where: {
-    role: "joueur",
-    dateNaissance: {
-      [Op.between]: [minDate, maxDate],
-    },
-    "$groupeJoueur.id$": null // ✅ only players WITHOUT group
-  },
-  include: [
-    {
-      model: GroupeJoueur,
-      as: "groupeJoueur",
-      required: false,
-      attributes: [] 
-    },
-  ],
-})
+            attributes:{exclude:["password"]},
+        where: {
+            joueurLevel:group.groupePricing.level,
+            role: "joueur",
+            dateNaissance: {
+            [Op.between]: [minDate, maxDate],
+            },
+            "$groupeJoueur.id$": null,
+        },
+        include: [
+            {
+            model: GroupeJoueur,
+            as: "groupeJoueur",
+            required: false,
+            attributes: [] 
+            },
+    ],
+    })
             if(players.length === 0) {
                 return res.status(200).json({message:"there are not have players with that age"})
             }
@@ -141,7 +145,6 @@ async (req,res) => {
         return res.status(500).json({message:"server error"});
     }
 }
-]
 
 exports.addChild = [
     body("nom").notEmpty().withMessage("nom is required"),

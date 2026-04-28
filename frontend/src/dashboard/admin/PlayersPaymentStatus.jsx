@@ -72,6 +72,11 @@ export default function PlayersPaymentStatus() {
                       ? new Date(p.paymentDate).toLocaleDateString()
                       : "-"}
                   </td>
+                   <td className="p-3">               
+                      <button disabled={p.paid} className="font-semibold bg-black p-2 rounded-md">
+                        payment
+                      </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

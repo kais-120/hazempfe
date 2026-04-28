@@ -37,7 +37,7 @@ const AddJoueurGroupManual = () => {
         setSelectedPlayers([])
 
         const res = await AxiosToken.get(
-          `/user/get/joueur/age/${groupAge.type}`
+          `/user/get/joueur/age/${id}`
         )
 
         setPlayers(res.data.players)
@@ -104,7 +104,7 @@ const AddJoueurGroupManual = () => {
       </h1>
 
       {/* LIST */}
-      {type && !error && (
+      {!error && (
         <div className="grid grid-cols-2 gap-4 mt-4">
 
           {/* AVAILABLE PLAYERS */}

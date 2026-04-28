@@ -25,6 +25,12 @@ import Payment from './dashboard/joueur/Payment'
 import AddCategory from './dashboard/admin/AddCategory'
 import CategoriesList from './dashboard/admin/CategoriesList'
 import PlayersPaymentStatus from './dashboard/admin/PlayersPaymentStatus'
+import Analyse from './dashboard/admin/Analyse'
+import MessageAdmin from './dashboard/admin/MessageAdmin'
+import Testing from './dashboard/admin/Testing'
+import Boutique from './dashboard/admin/Boutique'
+import CreateProduct from './dashboard/admin/CreateProduct'
+import CreateTest from './dashboard/admin/CreateTest'
 
 const App = () => {
   return (
@@ -36,7 +42,13 @@ const App = () => {
       </Route>
       <Route element={<RoleProtection allowRole={["joueur","parent","entraineur","admin"]} />}>
       <Route path='/dashboard' element={<DashboardHome />}>
+        <Route path="" element={<Analyse />}/>
+        <Route path="messages" element={<MessageAdmin />}/>
+        <Route path="testing" element={<Testing />}/>
+        <Route path="testing/add" element={<CreateTest />}/>
         <Route path="groupes" element={<Groups />}/>
+        <Route path="boutique" element={<Boutique />}/>
+        <Route path="boutique/product/add" element={<CreateProduct />}/>
         <Route path="groupes/:id/emploi/add" element={<AddEmploi />}/>
         <Route path="groupes/:id/emploi/edit" element={<EditEmploi />}/>
         <Route path="groupes/add" element={<AddGroupe />}/>

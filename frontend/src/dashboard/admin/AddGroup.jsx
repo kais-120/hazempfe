@@ -8,6 +8,7 @@ const AddGroupe = () => {
 
   const [entraineurs, setEntraineurs] = useState([])
   const [search, setSearch] = useState("")
+  const [category, setCategory] = useState([])
   const [selected, setSelected] = useState(null)
 
   const [loading, setLoading] = useState(false)
@@ -26,6 +27,19 @@ const AddGroupe = () => {
     fetchData()
   }, [])
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await AxiosToken.get("/pricing")
+        setCategory(res.data.categories)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   const filtered = entraineurs.filter((e) =>
     `${e.nom} ${e.prenom}`
       .toLowerCase()
@@ -36,7 +50,8 @@ const AddGroupe = () => {
     initialValues:{
         libelle:"",
         entraineur_id :null,
-        type:""
+        type:null,
+        level:""
     },
     onSubmit : async (values) => {
         console.log(values)
@@ -57,7 +72,6 @@ const AddGroupe = () => {
 
 
   
-
   return (
     <div className="max-w-2xl mx-auto p-6">
 
@@ -79,6 +93,7 @@ const AddGroupe = () => {
           />
         </div>
         <div><label className="text-sm text-gray-600">catégorie</label>
+        {category && category.length > 0 ?
          <select
           value={formik.values.type}
           name="type"
@@ -86,14 +101,34 @@ const AddGroupe = () => {
           className="border p-2 rounded w-full mt-1"
         >
           <option selected disabled value="">-- Choisir catégorie --</option>
-          <option value="U4">U4</option>
-          <option value="U8">U8</option>
-          <option value="U12">U12</option>
-          <option value="U16">U16</option>
+          {category.map((item)=>(
+          <option key={item.id} value={item.id} >{item.libelle}</option>
+          ))}
         </select>
+        :
+        <button
+        onClick={()=>navigate("/dashboard/gestion-paiements")}
+          className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded w-full"
+        >
+          Ajouter
+        </button>
+          }
         </div>
 
-        {/* SEARCH ENTRAINEUR */}
+          <div><label className="text-sm text-gray-600">nieaux</label>
+         <select
+          value={formik.values.level}
+          name="level"
+          onChange={formik.handleChange}
+          className="border p-2 rounded w-full mt-1"
+        >
+          <option selected disabled value="">-- Choisir catégorie --</option>
+          <option value="débutant" >Débutant</option>
+          <option value="intermédiaire" >Intermédiaire</option>
+          <option value="avancé" >Avancé</option>
+        </select>
+        </div>
+        
         <div>
           <label className="text-sm text-gray-600">
             Choisir entraîneur
@@ -136,7 +171,7 @@ const AddGroupe = () => {
 
         {/* BUTTON */}
         <button
-          disabled={loading}
+          disabled={loading || category.length === 0}
           type="submit"
           className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded w-full"
         >

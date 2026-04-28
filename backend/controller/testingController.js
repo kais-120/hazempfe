@@ -15,8 +15,8 @@ exports.createTest = [
         try{
         const {joueur_id,entraineur_id,date_test,time_test} = req.body;
         const joueur = await User.findByPk(joueur_id);
-        const entraineur_id = await User.findByPk(entraineur_id);
-        if(joueur || entraineur_id){
+        const entraineur= await User.findByPk(entraineur_id);
+        if(joueur || entraineur){
             return res.status(404).json({message:"users not found"});
         }
         await TestJoueur.create({joueur_id,entraineur_id,date_test,time_test});

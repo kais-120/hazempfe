@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/add",[AuthenticationToken,AuthenticationAdmin],addUser);
 router.get("/:role",[AuthenticationToken,AuthenticationAdmin],getUsers);
-router.get("/get/joueur/age/:type",[AuthenticationToken,AuthenticationAdmin],getJoueurByAge);
+router.get("/get/joueur/age/:id",[AuthenticationToken,AuthenticationAdmin],getJoueurByAge);
 router.post("/parent/add/child",[AuthenticationToken],addChild);
 router.get("/parent/get/child",[AuthenticationToken],getChild);
 
