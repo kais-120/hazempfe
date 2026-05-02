@@ -29,7 +29,7 @@ const TestJoueur = sequelize.define("test_joueur",{
         }
     },
     status: { 
-    type:DataTypes.ENUM( "programmé","done","accepté","absent"), 
+    type:DataTypes.ENUM( "programmé","done","absent"), 
     defaultValue : "programmé",
     }
     

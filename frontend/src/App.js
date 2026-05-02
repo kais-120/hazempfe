@@ -31,6 +31,9 @@ import Testing from './dashboard/admin/Testing'
 import Boutique from './dashboard/admin/Boutique'
 import CreateProduct from './dashboard/admin/CreateProduct'
 import CreateTest from './dashboard/admin/CreateTest'
+import EntraineurTesting from './dashboard/entraineur/EntraineurTesting'
+import EntraineurMessage from './dashboard/entraineur/EntraineurMessage'
+import JoueurTest from './dashboard/entraineur/JoueurTest'
 
 const App = () => {
   return (
@@ -75,6 +78,9 @@ const App = () => {
         <Route path="gestion-paiements/add" element={<AddCategory />}/>
         <Route path="paiements-joueurs" element={<PlayersPaymentStatus />}/>
 
+        <Route path='entraineur/testing' element={<EntraineurTesting/>}/>
+        <Route path='entraineur/testing/joueurs' element={<JoueurTest />}/>
+        <Route path='entraineur/messages' element={<EntraineurMessage/>}/>
 
 
 

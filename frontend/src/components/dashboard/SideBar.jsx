@@ -10,6 +10,7 @@ import { HiMiniBanknotes, HiOutlineCalendarDays } from "react-icons/hi2"
 import { FaMoneyCheckDollar, FaBarChart } from "react-icons/fa6"
 import { BiMenu } from "react-icons/bi"
 import { SportShoe } from "lucide-react"
+import Cookies from "universal-cookie"
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const { user } = useProfile()
@@ -33,6 +34,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     }
     childData()
   }, [user])
+  const cookie = new Cookies();
+  const handleLogout = () => {
+    cookie.remove("auth");
+    navigate("/")
+  }
 
   const menuVariants = {
     joueur: [
@@ -44,8 +50,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     ],
     entraineur: [
       { to: "/dashboard/emploi", icon: <FaRegCalendarAlt />, label: "Emploi" },
-      { to: "/dashboard/joueurs", icon: <FaUsers />, label: "Joueurs" },
-      { to: "/dashboard/messages", icon: <IoMdChatbubbles />, label: "Messages" },
+      { to: "/dashboard/entraineur/testing", icon: <FaUsers />, label: "Testing" },
+      { to: "/dashboard/entraineur/messages", icon: <IoMdChatbubbles />, label: "Messages" },
       { to: "/dashboard/entrainements", icon: <MdOutlineAssignment />, label: "Entraînements" },
       { to: "/dashboard/performance", icon: <IoMdTrendingUp />, label: "Performance" },
       { to: "/dashboard/presence", icon: <HiOutlineCalendarDays />, label: "Présence" },
@@ -321,7 +327,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
         {/* FOOTER */}
         <div className="p-4 border-t border-slate-700/30 mt-auto">
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-red-500/20 text-slate-300 hover:text-red-400 transition font-medium">
+          <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-red-500/20 text-slate-300 hover:text-red-400 transition font-medium">
             <FaSignOutAlt size={14} />
             Déconnexion
           </button>

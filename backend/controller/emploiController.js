@@ -133,7 +133,16 @@ exports.getEntraineurEmploi =  async (req,res) => {
         if(emploi.length === 0){
             return res.status(404).json({ message: "you don't have group"});
         }
-        return res.status(200).json({ message: "emploi",emploi});
+        const allEmplois = emploi.flatMap(g => 
+            g.emploi.map(e => ({
+                ...e.toJSON(),
+                groupe: {
+                    id: g.id,
+                    libelle: g.libelle
+                }
+            }))
+        );
+        return res.status(200).json({ message: "emploi",emploi:allEmplois});
     }catch(err){
         console.log(err)
         return res.status(500).json({message:"error server"});

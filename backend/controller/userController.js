@@ -2,7 +2,7 @@ const { body, validationResult, param } = require("express-validator")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
-const { Groupe, GroupeJoueur, ParentChild, PricingCategories } = require("../model");
+const { Groupe, GroupeJoueur, ParentChild, PricingCategories, TestJoueur } = require("../model");
 const { Op } = require("sequelize");
 const sequelize = require("../config/db");
 
@@ -192,21 +192,38 @@ exports.getChild =  async (req,res) => {
     }
 }
 
-exports.playersNoLevel =  async (req,res) => {
-        try{
-        const users = await User.findAll({
-            where:{
-                role:"joueur",
-                joueurLevel:null
-            },
-            attributes:{exclude:["password"]}
-        });
-        if(users.length === 0){
-            return res.status(404).json({message:"all players have level"});
-        }
-        return res.status(201).json({message:"player not level",users});
-    }catch(err){
-        console.log(err)
-        return res.status(500).json({message:"server error"});
+exports.playersNoLevel = async (req, res) => {
+  try {
+  const users = await User.findAll({
+  where: {
+    role: "joueur",
+    joueurLevel: null
+  },
+  attributes: { exclude: ["password"] },
+  include: [
+    {
+      model: TestJoueur,
+      as: "testerJoueur",
+      required: false
     }
+  ]
+})
+
+const result = users.filter(user => {
+  const tests = user.testerJoueur || []
+
+  if (tests.length === 0) return true
+
+  return tests.some(t => t.status === "absent")
+})
+
+return res.status(200).json({
+  message: "filtered players",
+  users: result
+})
+
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "server error" })
+  }
 }

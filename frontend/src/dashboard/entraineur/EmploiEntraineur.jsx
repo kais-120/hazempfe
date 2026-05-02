@@ -10,17 +10,16 @@ const days = [
   "Vendredi",
   "Samedi"
 ]
-
 const hours = Array.from({ length: 14 }, (_, i) => 8 + i)
 
 const EmploiEntraineur = () => {
-  const [groups, setGroups] = useState([])
+  const [events, setEvents] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await AxiosToken.get("/emploi/entraineur")
-        setGroups(res.data.emploi)
+        setEvents(res.data.emploi)
       } catch (err) {
         console.log(err)
       }
@@ -34,14 +33,14 @@ const EmploiEntraineur = () => {
     return h + m / 60
   }
 
-  const EventBlock = ({ event, groupName }) => {
+  const EventBlock = ({ event }) => {
     const start = toDecimal(event.heure_debut)
     const end = toDecimal(event.heure_fin)
     const duration = end - start
 
     return (
       <div
-        className="absolute top-1 h-12 bg-yellow-400 text-black text-xs p-1 rounded shadow z-10"
+        className="absolute top-1 h-12 bg-yellow-400 text-black text-xs p-1 rounded shadow"
         style={{
           left: `${(start - 8) * 100}%`,
           width: `${duration * 100}%`
@@ -49,9 +48,9 @@ const EmploiEntraineur = () => {
       >
         <div className="font-bold">{event.titre}</div>
 
-        {/* 🔥 GROUP NAME INSIDE BOX */}
+        {/* ✅ group name */}
         <div className="text-[10px] font-semibold text-blue-900">
-          {groupName}
+          {event.groupe?.libelle}
         </div>
 
         <div className="text-[10px]">
@@ -61,9 +60,11 @@ const EmploiEntraineur = () => {
     )
   }
 
-  if (!groups.length) {
+  if (!events.length) {
     return <p className="p-6">Chargement...</p>
   }
+
+
 
   return (
     <div className="p-6">
@@ -71,57 +72,49 @@ const EmploiEntraineur = () => {
         Mon emploi du temps
       </h1>
 
-      {groups.map(group => (
-        <div key={group.id} className="mb-10">
+      <div className="overflow-x-auto border">
 
+        {/* HEADER */}
+        <div className="grid grid-cols-[120px_repeat(14,1fr)] bg-gray-100">
+          <div className="p-2 font-bold">Jour</div>
 
-          <div className="overflow-x-auto border">
+          {hours.map(h => (
+            <div key={h} className="p-2 text-xs text-center border-l">
+              {h}:00
+            </div>
+          ))}
+        </div>
 
-            {/* HEADER */}
-            <div className="grid grid-cols-[120px_repeat(14,1fr)] bg-gray-100">
-              <div className="p-2 font-bold">Jour</div>
+        {/* DAYS */}
+        {days.map((day, dayIndex) => (
+          <div
+            key={dayIndex}
+            className="grid grid-cols-[120px_repeat(14,1fr)] border-t"
+          >
 
-              {hours.map(h => (
-                <div key={h} className="p-2 text-xs text-center border-l">
-                  {h}:00
-                </div>
-              ))}
+            <div className="p-2 font-semibold bg-gray-50 border-r">
+              {day}
             </div>
 
-            {/* DAYS */}
-            {days.map((day, dayIndex) => (
-              <div
-                key={dayIndex}
-                className="grid grid-cols-[120px_repeat(14,1fr)] border-t"
-              >
+            <div className="col-span-14 relative h-14 border-l">
 
-                <div className="p-2 font-semibold bg-gray-50 border-r">
-                  {day}
-                </div>
+              {events
+                .filter(e => e.jour === dayIndex)
+                .map(event => (
+                  <EventBlock
+                    key={event.id}
+                    event={event}
+                  />
+                ))
+              }
 
-                <div className="col-span-14 relative h-14 border-l">
-
-                  {(group.emploi || [])
-                    .filter(e => e.jour === dayIndex)
-                    .map(event => (
-                      <EventBlock
-                        key={event.id}
-                        event={event}
-                        groupName={group.libelle}
-                      />
-                    ))
-                  }
-
-                </div>
-
-              </div>
-            ))}
+            </div>
 
           </div>
-        </div>
-      ))}
+        ))}
+
+      </div>
     </div>
   )
 }
-
-export default EmploiEntraineur
+export default EmploiEntraineur;

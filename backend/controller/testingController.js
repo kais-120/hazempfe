@@ -58,37 +58,113 @@ exports.getTesting = async(req,res) => {
     }
 }
 
-exports.getTestEntraineur = async(req,res) => {
-    try{
-        const userId = req.userId
-        const test = await TestJoueur.findAll({entraineur_id:userId})
-        return res.json({message:"testing",test});
+exports.getTestEntraineur = async (req, res) => {
+  try {
+    const userId = req.userId
 
-    }catch{
-        return res.status(500).json({message:"server error"});
-    }
+    const tests = await TestJoueur.findAll({
+      where: { entraineur_id: userId }
+    })
+
+    const grouped = {}
+
+    tests.forEach(t => {
+      const key = `${t.date_test}_${t.time_test}`
+
+      if (!grouped[key]) {
+        grouped[key] = {
+          date_test: t.date_test,
+          time_test: t.time_test,
+          tests: []
+        }
+      }
+
+      grouped[key].tests.push(t)
+    })
+
+    const result = Object.values(grouped)
+
+    return res.json({
+      message: "testing",
+      test: result
+    })
+
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "server error" })
+  }
 }
 
 exports.updateTestJoueur = [
-    body("level").notEmpty().withMessage("level is required"),
-    body("status").notEmpty().withMessage("status is required"),
+  body("joueurs").isArray().withMessage("joueurs must be an array"),
+
+  async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({
+        errors: errors.array().map(err => err.msg)
+      })
+    }
+
+    try {
+      const { joueurs } = req.body
+
+      for (const j of joueurs) {
+        const test = await TestJoueur.findByPk(j.id)
+
+        if (!test) continue
+
+       const finalStatus = j.status === "absent" ? "absent" : "done"
+
+            await test.update({ status: finalStatus })
+
+            if (j.status !== "absent") {
+                await User.update(
+                { joueurLevel: j.status },
+                { where: { id: test.joueur_id } }
+                )
+            }
+            }
+
+      return res.json({ message: "Tests updated successfully" })
+
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({ message: "server error" })
+    }
+  }
+]
+
+exports.listJoueur = [
+    body("date_test").notEmpty().withMessage("test time is required"),
+    body("time_test").notEmpty().withMessage("test date is required"),
     async(req,res) => {
     const errors = validationResult(req);
         if(!errors.isEmpty()){
             return res.status(422).json({ errors: errors.array().map(err => err.msg) });
         }
         try{
-        const {level,status} = req.body;
-        const {id} = req.params
+        const {date_test,time_test} = req.body;
         const userId = req.userId
-        const test = await TestJoueur.findByPk(id)
-        test.update({status});
-        await User.update({level,
-            while:{id:test.joueur_id}
+        const Joueurs = await TestJoueur.findAll({
+            where :{
+                entraineur_id:userId,
+                date_test,
+                time_test
+            },
+            include:[
+                {
+                    model:User,
+                    as:"joueurTester",
+                    attributes:["id","nom","prenom"]
+                }
+            ]
         })
-        return res.json({message:"testing is updated"});
+       
+        return res.json({message:"list joueurs",Joueurs});
 
-    }catch{
+    }catch(err){
+        console.log(err)
         return res.status(500).json({message:"server error"});
     }
 }
