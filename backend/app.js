@@ -9,6 +9,7 @@ const paymentRouter = require("./router/paymentRouter");
 const pricingCategoriesRouter = require("./router/pricingCategoriesRouter");
 const testingRouter  = require("./router/testingRouter");
 const productRouter  = require("./router/productRouter");
+const messageRouter  = require("./router/messageRouter");
 
 router.use("/auth",authRouter)
 router.use("/group",groupRoute)
@@ -19,5 +20,6 @@ router.use("/payment",paymentRouter)
 router.use("/pricing",pricingCategoriesRouter)
 router.use("/testing",testingRouter)
 router.use("/product",productRouter)
+router.use("/message",messageRouter)
 
 module.exports = router;

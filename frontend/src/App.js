@@ -32,8 +32,9 @@ import Boutique from './dashboard/admin/Boutique'
 import CreateProduct from './dashboard/admin/CreateProduct'
 import CreateTest from './dashboard/admin/CreateTest'
 import EntraineurTesting from './dashboard/entraineur/EntraineurTesting'
-import EntraineurMessage from './dashboard/entraineur/EntraineurMessage'
 import JoueurTest from './dashboard/entraineur/JoueurTest'
+import UserMessage from './dashboard/UserMessage'
+import MessageAdminInfo from './dashboard/admin/MessageAdminInfo'
 
 const App = () => {
   return (
@@ -47,6 +48,7 @@ const App = () => {
       <Route path='/dashboard' element={<DashboardHome />}>
         <Route path="" element={<Analyse />}/>
         <Route path="messages" element={<MessageAdmin />}/>
+        <Route path="messages/:id" element={<MessageAdminInfo />}/>
         <Route path="testing" element={<Testing />}/>
         <Route path="testing/add" element={<CreateTest />}/>
         <Route path="groupes" element={<Groups />}/>
@@ -80,7 +82,7 @@ const App = () => {
 
         <Route path='entraineur/testing' element={<EntraineurTesting/>}/>
         <Route path='entraineur/testing/joueurs' element={<JoueurTest />}/>
-        <Route path='entraineur/messages' element={<EntraineurMessage/>}/>
+        <Route path='user/messages' element={<UserMessage/>}/>
 
 
 

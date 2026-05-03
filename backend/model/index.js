@@ -6,6 +6,7 @@ const User = require("./User");
 const Absences = require("./Presence");
 const PricingCategories = require("./PricingCategories");
 const TestJoueur = require("./TestJoueur");
+const Message = require("./Message");
 
 User.hasMany(Groupe,{
     foreignKey:"entraineur_id",
@@ -109,6 +110,15 @@ TestJoueur.belongsTo(User,{
     as:"joueurTester"
 })
 
+User.hasMany(Message,{
+    foreignKey:"user_id",
+    as:"message"
+});
+Message.belongsTo(User,{
+    foreignKey:"user_id",
+    as:"userMessage"
+})
 
 
-module.exports = {User,Groupe,GroupeJoueur,Emploi,ParentChild,Absences,PricingCategories,TestJoueur}
+
+module.exports = {User,Groupe,GroupeJoueur,Emploi,ParentChild,Absences,PricingCategories,TestJoueur,Message}

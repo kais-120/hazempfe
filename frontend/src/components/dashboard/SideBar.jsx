@@ -44,14 +44,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     joueur: [
       { to: "/dashboard/emploi", icon: <FaRegCalendarAlt />, label: "Emploi" },
       { to: "/dashboard/paiement", icon: <FaCreditCard />, label: "Paiement" },
-      { to: "/dashboard/messages", icon: <IoMdChatbubbles />, label: "Messages" },
+      { to: "/dashboard/user/messages", icon: <IoMdChatbubbles />, label: "Messages" },
       { to: "/dashboard/profil", icon: <FaUser />, label: "Profil" },
       { to: "/dashboard/statistiques", icon: <MdSpaceDashboard />, label: "Statistiques" },
     ],
     entraineur: [
       { to: "/dashboard/emploi", icon: <FaRegCalendarAlt />, label: "Emploi" },
       { to: "/dashboard/entraineur/testing", icon: <FaUsers />, label: "Testing" },
-      { to: "/dashboard/entraineur/messages", icon: <IoMdChatbubbles />, label: "Messages" },
+      { to: "/dashboard/user/messages", icon: <IoMdChatbubbles />, label: "Messages" },
       { to: "/dashboard/entrainements", icon: <MdOutlineAssignment />, label: "Entraînements" },
       { to: "/dashboard/performance", icon: <IoMdTrendingUp />, label: "Performance" },
       { to: "/dashboard/presence", icon: <HiOutlineCalendarDays />, label: "Présence" },
@@ -63,7 +63,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     parent: [
       { to: "/dashboard/emploi", icon: <FaRegCalendarAlt />, label: "Emploi" },
       { to: "/dashboard/parent/paiement", icon: <FaCreditCard />, label: "Paiement" },
-      { to: "/dashboard/parent/messages", icon: <IoMdChatbubbles />, label: "Messages" },
+      { to: "/dashboard/user/messages", icon: <IoMdChatbubbles />, label: "Messages" },
       { to: "/dashboard/parent/profil", icon: <FaUser />, label: "Profil enfant" },
     ],
   }
