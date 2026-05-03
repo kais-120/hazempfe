@@ -77,7 +77,7 @@ const MessageAdmin = () => {
 
           {users.map(u => (
             <div
-              onClick={() => navigate(`/admin/messages/${u.user_id}`)}
+              onClick={() => navigate(`${u.user_id}`)}
               key={u.user_id}
               className="p-4 border rounded hover:bg-gray-50 cursor-pointer"
             >

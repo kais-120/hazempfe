@@ -2,6 +2,44 @@ const { body, validationResult } = require("express-validator")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
+const { PricingCategories } = require("../model");
+const { Op } = require("sequelize");
+const Subscriptions = require("../model/Subscriptions");
+
+function calculateAge(dateNaissance) {
+  const today = new Date()
+  const birthDate = new Date(dateNaissance)
+
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const m = today.getMonth() - birthDate.getMonth()
+
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--
+  }
+
+  return age
+}
+
+function calculateProratedAmount(price) {
+  const today = new Date()
+
+  const year = today.getFullYear()
+  const month = today.getMonth()
+
+  // عدد أيام الشهر
+  const totalDays = new Date(year, month + 1, 0).getDate()
+
+  // اليوم الحالي
+  const currentDay = today.getDate()
+
+  // الأيام المتبقية
+  const remainingDays = totalDays - currentDay + 1
+
+  // الحساب
+  const amount = (price / totalDays) * remainingDays
+
+  return Math.round(amount * 100) / 100 // 2 decimals
+}
 
 exports.register = [
     body("nom").notEmpty().withMessage("nom is required"),
@@ -37,6 +75,24 @@ exports.register = [
             }
         const hashed = await bcrypt.hash(password,10)
         const user = await User.create({nom,prenom,email:email.toLowerCase(),password:hashed,addresse,role,num_tel,dateNaissance});
+        if(role === "joueur"){
+        const age = calculateAge(dateNaissance)
+
+        const pricing = await PricingCategories.findOne({
+        where: {
+            min_age: { [Op.lte]: age },
+            max_age: { [Op.gte]: age }
+        }
+        })
+        const currentMonth = new Date().toISOString().slice(0, 7)
+        const proratedAmount = calculateProratedAmount(pricing.price)
+            await Subscriptions.create({
+            user_id: user.id,
+            month: currentMonth,
+            amount: proratedAmount,
+            status: "unpaid"
+            })
+        }
         return res.status(201).json({message:"account created"});
     }catch(err){
         console.log(err)

@@ -40,6 +40,7 @@ export default function PlayersPaymentStatus() {
                 <th className="p-3 text-left">Prénom</th>
                 <th className="p-3 text-left">Statut</th>
                 <th className="p-3 text-left">Date paiement</th>
+                <th className="p-3 text-left">Moment</th>
                 <th className="p-3 text-left">Action</th>
               </tr>
             </thead>
@@ -72,6 +73,8 @@ export default function PlayersPaymentStatus() {
                       ? new Date(p.paymentDate).toLocaleDateString()
                       : "-"}
                   </td>
+                  <td className="p-3">{p.totalDebt}</td>
+
                    <td className="p-3">               
                       <button disabled={p.paid} className="font-semibold bg-black p-2 rounded-md">
                         payment

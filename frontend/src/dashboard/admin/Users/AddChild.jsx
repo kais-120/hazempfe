@@ -32,6 +32,7 @@ const AddChild = () => {
         try{
             setLoading(true)
             await AxiosToken.post("/user/parent/add/child",values);
+            navigate("/dashboard/emploi")
         }catch{
             console.error("error")
         }finally{

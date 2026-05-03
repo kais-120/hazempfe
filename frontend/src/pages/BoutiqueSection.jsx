@@ -2,7 +2,8 @@ import starAcademyJersey from '../assets/images/logo_stars_academy_mednine.png'
 import ballon from '../assets/images/ballon.jpg'
 import chaussure from '../assets/images/nike-chaussures-promina.jpg'
 
-const BoutiqueSection = () => {
+const BoutiqueSection = ({store}) => {
+  console.log(store)
      const produits = [
     {
       id: 1,
@@ -40,7 +41,7 @@ const BoutiqueSection = () => {
 
       {/* GRID */}
       <div className="grid md:grid-cols-3 gap-10">
-        {produits.map((produit) => (
+        {store.map((produit) => (
           <div
             key={produit.id}
             className="bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:scale-105 transition"
@@ -48,39 +49,26 @@ const BoutiqueSection = () => {
             {/* IMAGE */}
             <div className="relative w-full h-56">
               <img
-                src={produit.image}
+                src={`http://localhost:5000/uploads/${produit.image}`}
                 className="w-full h-full object-cover"
-                alt={produit.nom}
+                alt={produit.titre}
               />
 
-              {/* Overlay logo only for product 1 */}
-              {produit.id === 1 && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10">
-                  <img
-                    src="assets/image/logo_academy_2026.png"
-                    className="w-16 h-16 object-contain opacity-95"
-                    alt="logo"
-                  />
-                  <span className="text-white font-black text-sm text-center">
-                    Star Academy <br /> Mednine
-                  </span>
-                </div>
-              )}
             </div>
 
             {/* CONTENT */}
             <div className="p-5 space-y-3">
-              <h3 className="text-xl font-bold">{produit.nom}</h3>
+              <h3 className="text-xl font-bold">{produit.titre}</h3>
 
               {/* PRIX */}
               <div className="flex items-center space-x-3">
                 <span className="text-yellow-400 text-lg font-bold">
-                  {produit.prix} DT
+                  {produit.price} DT
                 </span>
 
-                {produit.promo > 0 && (
+                {produit.discount > 0 && (
                   <span className="line-through text-gray-400">
-                    {produit.prix + produit.promo} DT
+                    {produit.price + produit.discount} DT
                   </span>
                 )}
               </div>

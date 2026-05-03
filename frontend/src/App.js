@@ -35,6 +35,7 @@ import EntraineurTesting from './dashboard/entraineur/EntraineurTesting'
 import JoueurTest from './dashboard/entraineur/JoueurTest'
 import UserMessage from './dashboard/UserMessage'
 import MessageAdminInfo from './dashboard/admin/MessageAdminInfo'
+import PaymentParent from './dashboard/parent/PaymentParent'
 
 const App = () => {
   return (
@@ -83,6 +84,7 @@ const App = () => {
         <Route path='entraineur/testing' element={<EntraineurTesting/>}/>
         <Route path='entraineur/testing/joueurs' element={<JoueurTest />}/>
         <Route path='user/messages' element={<UserMessage/>}/>
+        <Route path='parent/paiement' element={<PaymentParent/>}/>
 
 
 

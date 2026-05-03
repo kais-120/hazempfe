@@ -5,6 +5,43 @@ const User = require("../model/User");
 const { Groupe, GroupeJoueur, ParentChild, PricingCategories, TestJoueur } = require("../model");
 const { Op } = require("sequelize");
 const sequelize = require("../config/db");
+const Subscriptions = require("../model/Subscriptions");
+
+function calculateAge(dateNaissance) {
+  const today = new Date()
+  const birthDate = new Date(dateNaissance)
+
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const m = today.getMonth() - birthDate.getMonth()
+
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--
+  }
+
+  return age
+}
+
+function calculateProratedAmount(price) {
+  const today = new Date()
+
+  const year = today.getFullYear()
+  const month = today.getMonth()
+
+  // عدد أيام الشهر
+  const totalDays = new Date(year, month + 1, 0).getDate()
+
+  // اليوم الحالي
+  const currentDay = today.getDate()
+
+  // الأيام المتبقية
+  const remainingDays = totalDays - currentDay + 1
+
+  // الحساب
+  const amount = (price / totalDays) * remainingDays
+
+  return Math.round(amount * 100) / 100 // 2 decimals
+}
+
 
 exports.addUser = [
     body("nom").notEmpty().withMessage("nom is required"),
@@ -160,6 +197,22 @@ exports.addChild = [
         const {nom,prenom,dateNaissance} = req.body;
         const user = await User.create({nom,prenom,dateNaissance,role:"joueur"});
         await ParentChild.create({parent_id:userId,joueur_id:user.id})
+        const age = calculateAge(dateNaissance)
+
+        const pricing = await PricingCategories.findOne({
+        where: {
+            min_age: { [Op.lte]: age },
+            max_age: { [Op.gte]: age }
+        }
+        })
+        const currentMonth = new Date().toISOString().slice(0, 7)
+        const proratedAmount = calculateProratedAmount(pricing.price)
+            await Subscriptions.create({
+            user_id: user.id,
+            month: currentMonth,
+            amount: proratedAmount,
+            status: "unpaid"
+            })
         return res.status(201).json({message:"child created"});
     }catch(err){
         console.log(err)

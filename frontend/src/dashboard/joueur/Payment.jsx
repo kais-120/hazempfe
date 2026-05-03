@@ -17,7 +17,7 @@ const Payment = () => {
   useEffect(()=>{
     const paymentData = async () => {
         try{
-            const res = await AxiosToken.get("/payment/date/verify");
+            const res = await AxiosToken.get("/payment/verify");
             setPrice(res.data)
         }catch{
             console.error("error")
@@ -41,36 +41,36 @@ const Payment = () => {
 
   <div className="bg-black/40 p-5 rounded-xl">
 
-    {!price?.alreadyPaid && (
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="text-yellow-400 font-semibold">
-            ⚠️ Paiement non effectué
-          </p>
-          <p className="text-sm mt-1">
-            Montant: {price?.priceThisMonth} TND
-          </p>
-        </div>
-
-        <button className="bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300">
-          Payer maintenant
-        </button>
-      </div>
-    )}
-
-    {/* ✅ PAID */}
-    {price?.alreadyPaid  && (
+  {!price?.paid && (
+    <div className="flex justify-between items-center">
       <div>
-        <p className="text-green-400 font-semibold">
-          ✔ Paiement effectué
+        <p className="text-yellow-400 font-semibold">
+          ⚠️ Paiement non effectué
         </p>
         <p className="text-sm mt-1">
-          Montant: {price?.priceThisMonth} TND
+          Montant: {price?.totalDebt} TND
         </p>
       </div>
-    )}
 
-  </div>
+      <button className="bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300">
+        Payer maintenant
+      </button>
+    </div>
+  )}
+
+  {/* ✅ PAID */}
+  {price?.paid && (
+    <div>
+      <p className="text-green-400 font-semibold">
+        ✔ Paiement effectué
+      </p>
+      <p className="text-sm mt-1">
+        Montant: 0 TND
+      </p>
+    </div>
+  )}
+
+</div>
 
       {/* 📋 Historique */}
       <div className="bg-black/40 p-4 rounded-xl">

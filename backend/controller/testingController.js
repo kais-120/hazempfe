@@ -1,5 +1,5 @@
 const { body, validationResult } = require("express-validator");
-const { User } = require("../model");
+const { User, ParentChild } = require("../model");
 const TestJoueur = require("../model/TestJoueur");
 
 exports.createTest = [
@@ -169,3 +169,45 @@ exports.listJoueur = [
     }
 }
 ]
+
+exports.joueurTesting = async (req, res) => {
+  try {
+    const userId = req.userId
+
+    const test = await TestJoueur.findByPk(userId,{
+        where : {status:"programmé"}
+    })
+    return res.json({
+      message: "testing user",
+      test: test
+    })
+
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "server error" })
+  }
+}
+
+exports.parentTesting = async (req, res) => {
+  try {
+    const {id} = req.params;
+    const userId = req.userId
+    const test = await TestJoueur.findByPk(id,{
+        where : {status:"programmé"}
+    })
+    const parent = await ParentChild.findOne({where :{
+        parent_id:userId
+    }})
+    if(parent.joueur_id != id){
+        return res.status(403).json({ message: "you don't have access to this child" })
+    }   
+    return res.json({
+      message: "testing user",
+      test: test
+    })
+
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "server error" })
+  }
+}

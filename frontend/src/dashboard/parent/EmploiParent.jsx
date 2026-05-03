@@ -15,6 +15,8 @@ const hours = Array.from({ length: 14 }, (_, i) => 8 + i) // 8 → 21
 
 const EmploiParent = () => {
   const [groups, setGroups] = useState([])
+  const [test, setTest] = useState([])
+
 
   useEffect(() => {
     const id = localStorage.getItem("child")
@@ -22,6 +24,21 @@ const EmploiParent = () => {
       try {
         const res = await AxiosToken.get(`/emploi/parent/${id}`)
         setGroups(res.data.emploi)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    const id = window.localStorage.getItem("child");
+    if(!id) return
+    const fetchData = async () => {
+      try {
+        const res = await AxiosToken.get(`/testing/parent/${id}`)
+        setTest(res.data.test)
       } catch (err) {
         console.log(err)
       }
@@ -42,6 +59,7 @@ const EmploiParent = () => {
     const end = toDecimal(event.heure_fin)
 
     const duration = end - start
+    
 
     return (
       <div
@@ -58,9 +76,28 @@ const EmploiParent = () => {
       </div>
     )
   }
+  const formatTestDate = (dateStr, timeStr) => {
+  const date = new Date(`${dateStr}T${timeStr}`);
 
-  if (!groups.length) {
-    return <p className="p-6">Chargement...</p>
+  const formattedDate = date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  const formattedTime = date.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return `${formattedDate} ${formattedTime}`;
+};
+  if (test) {
+    return <p className="p-6">vous avez un test {formatTestDate(test?.date_test,test?.time_test)}</p>
+  }
+
+if (!groups.length) {
+    return <p className="p-6">vous n'avez pas de groupe</p>
   }
 
   return (

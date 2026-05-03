@@ -11,10 +11,11 @@ const days = [
   "Samedi"
 ]
 
-const hours = Array.from({ length: 14 }, (_, i) => 8 + i) // 8 → 21
+const hours = Array.from({ length: 14 }, (_, i) => 8 + i)
 
 const EmploiJoueur = () => {
   const [groups, setGroups] = useState([])
+  const [test, setTest] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,8 +29,19 @@ const EmploiJoueur = () => {
 
     fetchData()
   }, [])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await AxiosToken.get("/testing/joueur")
+        setTest(res.data.test)
+      } catch (err) {
+        console.log(err)
+      }
+    }
 
-  // 🔥 Convert HH:mm:ss → decimal (10:30 => 10.5)
+    fetchData()
+  }, [])
+
   const toDecimal = (time) => {
     const [h, m] = time.split(":").map(Number)
     return h + m / 60
@@ -46,8 +58,8 @@ const EmploiJoueur = () => {
       <div
         className="absolute top-1 h-12 bg-yellow-400 text-black text-xs p-1 rounded shadow z-10"
         style={{
-          left: `${(start - 8) * 100}%`,     // 🔥 position from 8h
-          width: `${duration * 100}%`        // 🔥 width correct (with 30min)
+          left: `${(start - 8) * 100}%`,    
+          width: `${duration * 100}%`
         }}
       >
         <div className="font-bold">{event.titre}</div>
@@ -57,9 +69,27 @@ const EmploiJoueur = () => {
       </div>
     )
   }
+const formatTestDate = (dateStr, timeStr) => {
+  const date = new Date(`${dateStr}T${timeStr}`);
 
+  const formattedDate = date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  const formattedTime = date.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return `${formattedDate} ${formattedTime}`;
+};
+  if (test) {
+    return <p className="p-6">vous avez un test {formatTestDate(test?.date_test,test?.time_test)}</p>
+  }
   if (!groups.length) {
-    return <p className="p-6">Chargement...</p>
+    return <p className="p-6">vous n'avez pas de groupe</p>
   }
 
   return (
